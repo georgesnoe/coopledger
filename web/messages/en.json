@@ -1,5 +1,86 @@
 {
-  "homepage": {
-    "title": "Welcome to Next.js!"
+  "Navbar": {
+    "links": {
+      "solution": "Solution",
+      "impact": "Impact",
+      "tech": "Technology",
+      "team": "Team"
+    },
+    "cta": "Launch App"
+  },
+  "Hero": {
+    "title": "Cultivating transparency, harvesting trust.",
+    "subtitle": "The blockchain platform securing the governance of agricultural cooperatives in Togo and opening the doors to financing.",
+    "cta_primary": "Join the revolution",
+    "cta_secondary": "Watch demo video"
+  },
+  "Problem": {
+    "title": "Why is CoopLedger a necessity?",
+    "description": "The lack of transparency is not just an administrative problem, it is a brake on rural development.",
+    "cards": {
+      "opacity": {
+        "title": "Opacity",
+        "text": "60%+ of Togolese cooperatives manage their accounting solely on paper/cash."
+      },
+      "risk": {
+        "title": "Risk",
+        "text": "15 to 20% of collective funds are embezzled every year."
+      },
+      "trust": {
+        "title": "Mistrust",
+        "text": "70% of members cite lack of transparency as the primary reason for mistrust."
+      },
+      "exclusion": {
+        "title": "Exclusion",
+        "text": "Only 0.2% of bank loans are granted to the agricultural sector."
+      }
+    }
+  },
+  "Solution": {
+    "title": "The Trust Machine",
+    "description": "We use blockchain technology to transform mistrust into certainty.",
+    "pillars": {
+      "ledger": {
+        "title": "Immutable Ledger",
+        "text": "Every transaction is etched into the blockchain, making any falsification impossible."
+      },
+      "democracy": {
+        "title": "Digital Democracy",
+        "text": "Members vote on expenses via secure Smart Contracts."
+      },
+      "visibility": {
+        "title": "Real-time Visibility",
+        "text": "A dashboard accessible to all members to track the financial health of their cooperative."
+      }
+    }
+  },
+  "Impact": {
+    "title": "Social Impact",
+    "description": "More than a technical tool, a growth lever for farmers.",
+    "cards": {
+      "revenue": {
+        "title": "Revenue",
+        "text": "Increased farmer incomes by 30 to 50% through sound management and collective buying."
+      },
+      "funding": {
+        "title": "Funding",
+        "text": "Transparent cooperatives raise an average of 3 times more external funds (Banks, IFAD)."
+      }
+    }
+  },
+  "Footer": {
+    "slogan": "For a prosperous and transparent Togolese agriculture.",
+    "contact_title": "Partner Contact",
+    "contact_placeholder": "Your organization (Ministry, GIZ, IFAD...)",
+    "contact_name": "Name",
+    "contact_email": "Email",
+    "contact_message": "Your message",
+    "contact_button": "Send Request",
+    "copyright": "© 2026 CoopLedger. All rights reserved.",
+    "links": {
+      "conditions": "Terms",
+      "privacy": "Privacy",
+      "contact": "Contact"
+    }
   }
 }

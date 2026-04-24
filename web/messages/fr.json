@@ -1,5 +1,86 @@
 {
-  "homepage": {
-    "title": "Bienvenue sur la page d'accueil de Next.js!"
+  "Navbar": {
+    "links": {
+      "solution": "Solution",
+      "impact": "Impact",
+      "tech": "Technologie",
+      "team": "Équipe"
+    },
+    "cta": "Lancer l'App"
+  },
+  "Hero": {
+    "title": "Cultiver la transparence, récolter la confiance.",
+    "subtitle": "La plateforme blockchain qui sécurise la gouvernance des coopératives agricoles au Togo et ouvre les portes du financement.",
+    "cta_primary": "Rejoindre la révolution",
+    "cta_secondary": "Voir la vidéo démo"
+  },
+  "Problem": {
+    "title": "Pourquoi CoopLedger est une nécessité ?",
+    "description": "Le manque de transparence n'est pas seulement un problème administratif, c'est un frein au développement rural.",
+    "cards": {
+      "opacity": {
+        "title": "Opacité",
+        "text": "+60% des coopératives togolaises gèrent leur comptabilité uniquement sur papier/cash."
+      },
+      "risk": {
+        "title": "Risque",
+        "text": "15 à 20% des fonds collectifs font l'objet de détournements chaque année."
+      },
+      "trust": {
+        "title": "Méfiance",
+        "text": "70% des membres citent le manque de transparence comme principale raison de méfiance."
+      },
+      "exclusion": {
+        "title": "Exclusion",
+        "text": "Seulement 0,2% des prêts bancaires sont consentis au secteur agricole."
+      }
+    }
+  },
+  "Solution": {
+    "title": "La Machine à Confiance",
+    "description": "Nous utilisons la technologie blockchain pour transformer la méfiance en certitude.",
+    "pillars": {
+      "ledger": {
+        "title": "Registre Immuable",
+        "text": "Chaque transaction est gravée dans la blockchain, rendant toute falsification impossible."
+      },
+      "democracy": {
+        "title": "Démocratie Digitale",
+        "text": "Les membres votent sur les dépenses via des Smart Contracts sécurisés."
+      },
+      "visibility": {
+        "title": "Visibilité Temps Réel",
+        "text": "Un tableau de bord accessible à tous les membres pour suivre la santé financière de leur coopérative."
+      }
+    }
+  },
+  "Impact": {
+    "title": "L'Impact Social",
+    "description": "Plus qu'un outil technique, un levier de croissance pour les agriculteurs.",
+    "cards": {
+      "revenue": {
+        "title": "Revenus",
+        "text": "Augmentation des revenus des agriculteurs de 30 à 50% grâce à une gestion saine et aux achats groupés."
+      },
+      "funding": {
+        "title": "Financement",
+        "text": "Les coopératives transparentes lèvent en moyenne 3 fois plus de fonds externes (Banques, IFAD)."
+      }
+    }
+  },
+  "Footer": {
+    "slogan": "Pour une agriculture togolaise prospère et transparente.",
+    "contact_title": "Contact Partenaires",
+    "contact_placeholder": "Votre organisation (Ministère, GIZ, IFAD...)",
+    "contact_name": "Nom",
+    "contact_email": "Email",
+    "contact_message": "Votre message",
+    "contact_button": "Envoyer la demande",
+    "copyright": "© 2026 CoopLedger. Tous droits réservés.",
+    "links": {
+      "conditions": "Conditions",
+      "privacy": "Confidentialité",
+      "contact": "Contact"
+    }
   }
 }
