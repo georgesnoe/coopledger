@@ -1,7 +1,11 @@
 import { Plus_Jakarta_Sans, Libre_Baskerville, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
-import { NextIntlClientProvider } from "next-intl";
+import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { notFound } from "next/navigation";
+import { routing } from "@/i18n/routing";
+import { setRequestLocale } from "next-intl/server";
+
 import "@/styles/globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -19,14 +23,23 @@ const geistMono = Geist_Mono({
   variable: "--font-mono",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }>) {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+
+  setRequestLocale(locale);
+
   return (
     <html
-      lang="en"
+      lang={locale}
       suppressHydrationWarning
       className={cn(
         "antialiased",
