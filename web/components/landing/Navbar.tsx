@@ -55,9 +55,7 @@ export function Navbar() {
         {isOpen ? <IconX size={24} /> : <IconMenu2 size={24} />}
       </button>
 
-      {isOpen && (
-        <div className="lg:hidden absolute top-full left-0 right-0 bg-background/95 backdrop-blur-md border-b border-border p-4 space-y-4 animate-in slide-in-from-top-2">
-          <div className="flex flex-col gap-2">
+          <div className="hidden lg:flex items-center gap-7 text-sm font-medium">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -80,8 +78,44 @@ export function Navbar() {
             <LocaleToggle />
             <ThemeToggle />
           </div>
+
+          <button
+            className="lg:hidden p-2 rounded-lg hover:bg-muted transition-colors"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+          >
+            {isOpen ? <IconX size={24} /> : <IconMenu2 size={24} />}
+          </button>
         </div>
-      )}
+
+        {isOpen && (
+          <div className="lg:hidden mt-2 rounded-2xl border border-border/70 bg-background/95 backdrop-blur-md p-4 space-y-4 animate-in slide-in-from-top-2 shadow-xl">
+            <div className="flex flex-col gap-2">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-base font-medium hover:text-primary transition-colors py-2"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+            <div className="flex items-center gap-2">
+              <LocaleToggle />
+              <ThemeToggle />
+            </div>
+            <Link
+              href="/#how-it-works"
+              className="inline-flex items-center rounded-full bg-[#7cc6fe] px-4 py-2 text-sm font-semibold text-zinc-950"
+              onClick={() => setIsOpen(false)}
+            >
+              {t("Navbar.launch")}
+            </Link>
+          </div>
+        )}
+      </div>
     </nav>
   );
 }

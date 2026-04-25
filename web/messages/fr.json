@@ -18,7 +18,9 @@
       "trust": "des membres citent l’opacité comme problème majeur"
     },
     "balanceLabel": "Solde vérifié",
-    "balanceNote": "Audité en temps réel par tous les membres"
+    "balanceNote": "Audité en temps réel par tous les membres",
+    "watchDemo": "Voir les démos",
+    "badge": "CoopLedger • Blockchain pour coopératives"
   },
   "About": {
     "title": "À Propos de CoopLedger",
@@ -279,5 +281,35 @@
         "text": "Les mouvements de stock sont partagés instantanément."
       }
     }
+  },
+  "Media": {
+    "title": "Histoires réelles du terrain",
+    "description": "Des cas concrets de coopératives agricoles avec des vidéos explicatives et des photos du quotidien.",
+    "videos": {
+      "finance": {
+        "title": "Transparence financière en action",
+        "text": "Un aperçu pratique de la manière dont la traçabilité facilite le crédit et la gouvernance coopérative."
+      },
+      "coops": {
+        "title": "Du papier à la gouvernance digitale",
+        "text": "Découvrez comment les registres numériques réduisent les litiges et accélèrent les opérations."
+      }
+    },
+    "gallery": {
+      "meeting": {
+        "title": "Assemblée générale avec traçabilité complète",
+        "text": "Chaque membre vérifie les décisions, signatures et statuts de paiement."
+      },
+      "harvest": {
+        "title": "Financement de campagne géré collectivement",
+        "text": "Intrants et remboursements sont suivis par campagne et par village."
+      },
+      "logistics": {
+        "title": "Suivi stockage et logistique",
+        "text": "Les mouvements de stock sont partagés instantanément."
+      }
+    },
+    "videoLabel": "Étude vidéo",
+    "badge": "Histoires média"
   }
 }

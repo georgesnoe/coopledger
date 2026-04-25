@@ -3,6 +3,7 @@
 import React from "react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
+import Link from "next/link";
 
 export function Hero() {
   const t = useTranslations();
@@ -13,15 +14,33 @@ export function Hero() {
         <video autoPlay loop muted playsInline className="w-full h-full object-cover" poster="https://images.pexels.com/photos/2933243/pexels-photo-2933243.jpeg?auto=compress&cs=tinysrgb&w=1800">
           <source src="https://cdn.coverr.co/videos/coverr-rice-fields-from-above-1579/1080p.mp4" type="video/mp4" />
         </video>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(124,198,254,0.3),transparent_40%),radial-gradient(circle_at_80%_80%,rgba(54,143,204,0.2),transparent_45%)]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/35" />
         <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/75 to-background/20" />
       </div>
 
       <div className="container relative z-10 px-4 sm:px-6 py-12 sm:py-20">
         <div className="max-w-2xl">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold leading-tight text-foreground mb-6">
+          <p className="inline-flex rounded-full border border-[#7cc6fe]/60 bg-[#7cc6fe]/10 px-4 py-1 text-xs sm:text-sm font-semibold tracking-wider uppercase text-[#3188c2]">
+            {t("Hero.badge")}
+          </p>
+          <h1 className="mt-4 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold leading-tight text-foreground mb-6">
             {t("Hero.title")}
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed mb-8 max-w-xl">{t("Hero.subtitle")}</p>
+
+          <div className="flex flex-wrap items-center gap-3 mb-8">
+            <Link
+              href="#how-it-works"
+              className="rounded-full bg-[#7cc6fe] px-6 py-3 text-sm font-semibold text-zinc-950 hover:bg-[#6ab8ee] transition-colors"
+            >
+              {t("Navbar.launch")}
+            </Link>
+            <Link href="#media" className="rounded-full border border-border bg-background/60 px-6 py-3 text-sm font-semibold hover:bg-muted transition-colors">
+              {t("Hero.watchDemo")}
+            </Link>
+          </div>
+
           <div className="grid grid-cols-3 max-w-xl gap-3 sm:gap-4">
             {[
               { value: "0.2%", label: t("Hero.stats.loans") },

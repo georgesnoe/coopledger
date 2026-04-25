@@ -13,7 +13,11 @@ import { Footer } from "@/components/landing/Footer";
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen bg-background font-sans">
+    <main className="relative min-h-screen bg-background font-sans">
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -top-40 -left-20 h-[420px] w-[420px] rounded-full bg-[#7cc6fe]/20 blur-3xl" />
+        <div className="absolute top-[35%] -right-20 h-[360px] w-[360px] rounded-full bg-blue-300/20 blur-3xl" />
+      </div>
       <Navbar />
       <Hero />
       <AboutSection />

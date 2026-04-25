@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { IconPlayerPlay } from "@tabler/icons-react";
 
 const gallery = [
   {
