@@ -86,7 +86,6 @@ export function Navbar() {
           >
             {isOpen ? <IconX size={24} /> : <IconMenu2 size={24} />}
           </button>
-        </div>
 
         {isOpen && (
           <div className="lg:hidden mt-2 rounded-2xl border border-border/70 bg-background/95 backdrop-blur-md p-4 space-y-4 animate-in slide-in-from-top-2 shadow-xl">
