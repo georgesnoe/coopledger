@@ -54,7 +54,7 @@ export function HowItWorksSection() {
         <div className="grid lg:grid-cols-2 gap-8 items-center">
           <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl border border-border bg-black">
             <iframe
-              src="https://www.youtube.com/embed/bA8KvL8PsjQ"
+              src="https://www.youtube.com/embed/K9NvEQuDp0o"
               title={t("HowItWorks.demo_caption")}
               className="w-full h-full"
               loading="lazy"
