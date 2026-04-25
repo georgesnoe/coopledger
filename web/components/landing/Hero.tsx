@@ -2,13 +2,13 @@
 
 import React from "react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 export function Hero() {
   const t = useTranslations();
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16 sm:pt-20">
+    <section className="relative min-h-screen flex items-center overflow-hidden pt-20">
       <div className="absolute inset-0 z-0">
         <video
           autoPlay
@@ -20,66 +20,39 @@ export function Hero() {
         >
           <source src="https://videos.pexels.com/video-files/3129957/3129957-uhd_2560_1440_30fps.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-br from-background via-background/80 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-transparent" />
       </div>
 
-      <div className="container relative z-10 flex flex-col lg:flex-row items-center gap-8 sm:gap-12 px-4 sm:px-6">
-        <div className="flex-1 text-left space-y-6 sm:space-y-8 max-w-3xl">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-serif font-bold leading-tight text-foreground tracking-tight">
+      <div className="container relative z-10 px-4 sm:px-6 py-12 sm:py-20">
+        <div className="max-w-2xl">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold leading-tight text-foreground mb-6">
             {t("Hero.title")}
           </h1>
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed font-medium opacity-90">
+          <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed mb-8 max-w-xl">
             {t("Hero.subtitle")}
           </p>
-          <div className="flex flex-wrap gap-3 sm:gap-5 pt-2 sm:pt-4">
-            <Button 
-              className="rounded-full bg-[#7cc6fe] text-white hover:bg-[#6bb5ef] px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg font-bold transition-all hover:scale-105 shadow-xl shadow-blue-500/30"
-            >
-              {t("Hero.cta_primary")}
-            </Button>
-            <Button 
-              variant="outline" 
-              className="rounded-full px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg font-semibold backdrop-blur-md bg-white/5 border-white/10 hover:bg-white/10 transition-all"
-            >
-              {t("Hero.cta_secondary")}
-            </Button>
-          </div>
         </div>
-
-        <div className="flex-1 relative hidden lg:block">
-          <div className="relative w-[280px] h-[520px] lg:w-[320px] lg:h-[600px] mx-auto rounded-[3rem] border-[10px] lg:border-[12px] border-zinc-900 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden bg-zinc-900">
-            <div className="absolute inset-0 bg-gradient-to-b from-zinc-800 via-zinc-900 to-black p-5 lg:p-6 flex flex-col gap-3 lg:gap-4">
-              <div className="w-full h-4 bg-white/10 rounded-full animate-pulse" />
-              <div className="w-3/4 h-4 bg-white/10 rounded-full animate-pulse" />
-              
-              <div className="mt-6 lg:mt-8 p-5 lg:p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl space-y-3 lg:space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-xs text-zinc-400 font-medium">Balance</span>
-                  <span className="text-sm text-white font-bold">1,250,000 FCFA</span>
-                </div>
-                <div className="h-px bg-white/10" />
-                <div className="space-y-2 lg:space-y-3">
-                  <div className="flex justify-between text-[11px] text-zinc-300">
-                    <span>Seed Purchase</span>
-                    <span className="text-red-400 font-medium">- 45,000</span>
-                  </div>
-                  <div className="flex justify-between text-[11px] text-zinc-300">
-                    <span>Collective Sale</span>
-                    <span className="text-green-400 font-medium">+ 210,000</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-auto mb-8 lg:mb-10 p-4 lg:p-5 rounded-3xl bg-[#7cc6fe]/10 backdrop-blur-md border border-[#7cc6fe]/20 text-center">
-                <p className="text-xs text-zinc-300 font-medium mb-2 lg:mb-3">New Vote Available</p>
-                <div className="bg-[#7cc6fe] text-white text-[11px] py-2 lg:py-3 rounded-2xl font-bold shadow-lg shadow-blue-500/40">
-                  Vote Now
-                </div>
+        
+        <div className="hidden xl:block absolute right-12 top-1/2 -translate-y-1/2 w-[320px]">
+          <div className="relative w-full aspect-[9/16] rounded-[2.5rem] border-[8px] border-zinc-900 shadow-[0_0_60px_rgba(0,0,0,0.6)] overflow-hidden bg-zinc-900">
+            <Image 
+              src="https://images.unsplash.com/photo-1556742049-0c2eee77fc2e?w=600&auto=format&fit=crop"
+              alt="App Preview"
+              fill
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            <div className="absolute bottom-6 left-4 right-4">
+              <div className="bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md rounded-2xl p-4 shadow-xl">
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-1">Account Balance</p>
+                <p className="text-xl font-bold text-green-600 dark:text-green-400">1,250,000 XOF</p>
               </div>
             </div>
           </div>
         </div>
       </div>
+      
+      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent z-10" />
     </section>
   );
 }

@@ -1,21 +1,111 @@
 {
   "Navbar": {
     "links": {
+      "about": "About",
+      "how": "How It Works",
+      "features": "Features",
       "solution": "Solution",
-      "impact": "Impact",
-      "tech": "Technology",
-      "team": "Team"
-    },
-    "cta": "Launch App"
+      "partners": "Partners"
+    }
   },
   "Hero": {
     "title": "Cultivating transparency, harvesting trust.",
-    "subtitle": "The blockchain platform securing the governance of agricultural cooperatives in Togo and opening the doors to financing.",
-    "cta_primary": "Join the revolution",
-    "cta_secondary": "Watch demo video"
+    "subtitle": "The blockchain platform securing the governance of agricultural cooperatives in Togo and opening the doors to financing."
+  },
+  "About": {
+    "title": "About CoopLedger",
+    "description": "CoopLedger is a blockchain-based platform designed to restore trust in Togolese agricultural cooperatives. Born from the MIABE Hackathon, we address the critical issues of transparency, embezzlement, and financial exclusion that affect thousands of farmers.",
+    "stats_label": "Since 2024\nEmpowering\nFarmers",
+    "items": {
+      "mission": {
+        "title": "Mission",
+        "text": "Bring transparency to every cooperative through immutable technology."
+      },
+      "vision": {
+        "title": "Vision",
+        "text": "A Togo where every farmer can trust their cooperative."
+      },
+      "values": {
+        "title": "Values",
+        "text": "Transparency, integrity, and collective growth."
+      },
+      "approach": {
+        "title": "Approach",
+        "text": "Technology at the service of community."
+      }
+    }
+  },
+  "HowItWorks": {
+    "title": "How It Works",
+    "description": "A simple 4-step process to transform your cooperative governance.",
+    "step": "Step",
+    "steps": {
+      "join": {
+        "title": "Join the Network",
+        "text": "Register your cooperative and its members on the platform."
+      },
+      "record": {
+        "title": "Record Transactions",
+        "text": "Every income and expense is recorded on the blockchain."
+      },
+      "vote": {
+        "title": "Vote on Decisions",
+        "text": "Members participate in democratic decisions through smart contracts."
+      },
+      "track": {
+        "title": "Track in Real-Time",
+        "text": "Follow the financial health of your cooperative anytime."
+      }
+    },
+    "demo_caption": "See how cooperatives use CoopLedger",
+    "benefits_title": "Benefits for Your Cooperative",
+    "benefits": {
+      "transparency": "Complete transparency on all transactions",
+      "efficiency": "Reduce administrative costs by 40%",
+      "trust": "Rebuild member trust in leadership",
+      "growth": "Access to bank financing and donors"
+    }
+  },
+  "Features": {
+    "title": "Platform Features",
+    "description": "Everything you need to manage a transparent cooperative.",
+    "tech": "Built on Enterprise Blockchain",
+    "why_title": "Why Choose CoopLedger?",
+    "why": {
+      "security": "Bank-grade security with cryptographic encryption",
+      "transparency": "Every transaction is publicly verifiable",
+      "speed": "Settle transactions in seconds, not weeks",
+      "cost": "Reduce operational costs by up to 60%"
+    },
+    "items": {
+      "ledger": {
+        "title": "Immutable Ledger",
+        "text": "All transactions are permanent and tamper-proof."
+      },
+      "voting": {
+        "title": "Smart Voting",
+        "text": "Secure and transparent decision-making process."
+      },
+      "dashboard": {
+        "title": "Live Dashboard",
+        "text": "Real-time financial insights for all members."
+      },
+      "wallet": {
+        "title": "Digital Wallet",
+        "text": "Securely manage cooperative funds."
+      },
+      "audit": {
+        "title": "Auto-Audit",
+        "text": "Automated compliance and reporting."
+      },
+      "alerts": {
+        "title": "Smart Alerts",
+        "text": "Notifications for important activities."
+      }
+    }
   },
   "Problem": {
-    "title": "Why is CoopLedger a necessity?",
+    "title": "Why CoopLedger is Essential",
     "description": "The lack of transparency is not just an administrative problem, it is a brake on rural development.",
     "cards": {
       "opacity": {
@@ -23,7 +113,7 @@
         "text": "60%+ of Togolese cooperatives manage their accounting solely on paper/cash."
       },
       "risk": {
-        "title": "Risk",
+        "title": "Embezzlement Risk",
         "text": "15 to 20% of collective funds are embezzled every year."
       },
       "trust": {
@@ -31,7 +121,7 @@
         "text": "70% of members cite lack of transparency as the primary reason for mistrust."
       },
       "exclusion": {
-        "title": "Exclusion",
+        "title": "Financial Exclusion",
         "text": "Only 0.2% of bank loans are granted to the agricultural sector."
       }
     }
@@ -39,6 +129,7 @@
   "Solution": {
     "title": "The Trust Machine",
     "description": "We use blockchain technology to transform mistrust into certainty.",
+    "blockchain": "Enterprise Blockchain Infrastructure",
     "pillars": {
       "ledger": {
         "title": "Immutable Ledger",
@@ -59,28 +150,76 @@
     "description": "More than a technical tool, a growth lever for farmers.",
     "cards": {
       "revenue": {
-        "title": "Revenue",
+        "title": "Revenue Increase",
         "text": "Increased farmer incomes by 30 to 50% through sound management and collective buying."
       },
       "funding": {
-        "title": "Funding",
+        "title": "Funding Access",
         "text": "Transparent cooperatives raise an average of 3 times more external funds (Banks, IFAD)."
       }
     }
   },
+  "UseCases": {
+    "title": "Use Cases",
+    "description": "How Togolese cooperatives are using CoopLedger today.",
+    "items": {
+      "seeds": {
+        "title": "Seed Procurement",
+        "text": "Track collective seed purchases and distributions transparently."
+      },
+      "equipment": {
+        "title": "Equipment Sharing",
+        "text": "Manage shared farm equipment and maintenance costs."
+      },
+      "training": {
+        "title": "Farmer Training",
+        "text": "Fund and track agricultural training programs."
+      },
+      "storage": {
+        "title": "Storage & Sales",
+        "text": "Record harvest storage and collective sales."
+      }
+    }
+  },
+  "Partners": {
+    "title": "Our Partners",
+    "description": "CoopLedger works with leading institutions to maximize impact.",
+    "cta_title": "Partner With Us",
+    "cta_text": "Join the transformation of Togolese agriculture.",
+    "cta_button": "Contact Us",
+    "support_title": "Support We Offer",
+    "support_text": "Different types of support available for your cooperative:",
+    "support_types": {
+      "funding": "Funding Access",
+      "technical": "Technical Support",
+      "training": "Training Programs"
+    },
+    "items": {
+      "ministry": { "name": "Ministry of Agriculture" },
+      "ifad": { "name": "IFAD" },
+      "giz": { "name": "GIZ" },
+      "worldbank": { "name": "World Bank" },
+      "fao": { "name": "FAO" },
+      "bank": { "name": "Togolese Banks" }
+    }
+  },
   "Footer": {
     "slogan": "For a prosperous and transparent Togolese agriculture.",
-    "contact_title": "Partner Contact",
-    "contact_placeholder": "Your organization (Ministry, GIZ, IFAD...)",
-    "contact_name": "Name",
-    "contact_email": "Email",
-    "contact_message": "Your message",
-    "contact_button": "Send Request",
     "copyright": "© 2026 CoopLedger. All rights reserved.",
     "links": {
-      "conditions": "Terms",
-      "privacy": "Privacy",
-      "contact": "Contact"
+      "product": "Product",
+      "solution": "Solution",
+      "features": "Features",
+      "how": "How It Works",
+      "partners": "Partners",
+      "company": "Company",
+      "about": "About",
+      "use_cases": "Use Cases",
+      "contact": "Contact",
+      "legal": "Legal",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "cookies": "Cookie Policy"
     }
   }
 }

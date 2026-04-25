@@ -1,21 +1,111 @@
 {
   "Navbar": {
     "links": {
+      "about": "À Propos",
+      "how": "Comment Ça Marche",
+      "features": "Fonctionnalités",
       "solution": "Solution",
-      "impact": "Impact",
-      "tech": "Technologie",
-      "team": "Équipe"
-    },
-    "cta": "Lancer l'App"
+      "partners": "Partenaires"
+    }
   },
   "Hero": {
     "title": "Cultiver la transparence, récolter la confiance.",
-    "subtitle": "La plateforme blockchain qui sécurise la gouvernance des coopératives agricoles au Togo et ouvre les portes du financement.",
-    "cta_primary": "Rejoindre la révolution",
-    "cta_secondary": "Voir la vidéo démo"
+    "subtitle": "La plateforme blockchain qui sécurise la gouvernance des coopératives agricoles au Togo et ouvre les portes du financement."
+  },
+  "About": {
+    "title": "À Propos de CoopLedger",
+    "description": "CoopLedger est une plateforme basée sur la blockchain conçue pour restaurer la confiance dans les coopératives agricoles togolaises. Issue du MIABE Hackathon, nous répondons aux problèmes critiques de transparence, de détournement et d'exclusion financière qui affectent des milliers d'agriculteurs.",
+    "stats_label": "Depuis 2024\nAutonomiser\nles Agriculteurs",
+    "items": {
+      "mission": {
+        "title": "Mission",
+        "text": "Apporter la transparence à chaque coopérative grâce à une technologie immuable."
+      },
+      "vision": {
+        "title": "Vision",
+        "text": "Un Togo où chaque agriculteur peut faire confiance à sa coopérative."
+      },
+      "values": {
+        "title": "Valeurs",
+        "text": "Transparence, intégrité et croissance collective."
+      },
+      "approach": {
+        "title": "Approche",
+        "text": "La technologie au service de la communauté."
+      }
+    }
+  },
+  "HowItWorks": {
+    "title": "Comment Ça Marche",
+    "description": "Un processus simple en 4 étapes pour transformer la gouvernance de votre coopérative.",
+    "step": "Étape",
+    "steps": {
+      "join": {
+        "title": "Rejoindre le Réseau",
+        "text": "Enregistrez votre coopérative et ses membres sur la plateforme."
+      },
+      "record": {
+        "title": "Enregistrer les Transactions",
+        "text": "Chaque revenus et dépense est enregistré sur la blockchain."
+      },
+      "vote": {
+        "title": "Voter les Décisions",
+        "text": "Les membres participent aux décisions démocratiques via des smart contracts."
+      },
+      "track": {
+        "title": "Suivre en Temps Réel",
+        "text": "Suivez la santé financière de votre coopérative à tout moment."
+      }
+    },
+    "demo_caption": "Voir comment les coopératives utilisent CoopLedger",
+    "benefits_title": "Avantages pour Votre Coopérative",
+    "benefits": {
+      "transparency": "Transparence complète sur toutes les transactions",
+      "efficiency": "Réduire les coûts administratifs de 40%",
+      "trust": "Rebâtir la confiance des membres dans le leadership",
+      "growth": "Accès au financement bancaire et aux donors"
+    }
+  },
+  "Features": {
+    "title": "Fonctionnalités de la Plateforme",
+    "description": "Tout ce dont vous avez besoin pour gérer une coopérative transparente.",
+    "tech": "Construit sur Blockchain d'Entreprise",
+    "why_title": "Pourquoi Choisir CoopLedger?",
+    "why": {
+      "security": "Sécurité de niveau bancaire avec chiffrement cryptographique",
+      "transparency": "Chaque transaction est publiquement vérifiable",
+      "speed": "Régler les transactions en secondes, pas en semaines",
+      "cost": "Réduire les coûts opérationnels jusqu'à 60%"
+    },
+    "items": {
+      "ledger": {
+        "title": "Registre Immuable",
+        "text": "Toutes les transactions sont permanentes et infalsifiables."
+      },
+      "voting": {
+        "title": "Vote Intelligent",
+        "text": "Processus de prise de décision sécurisé et transparent."
+      },
+      "dashboard": {
+        "title": "Tableau de Bord Live",
+        "text": "Aperçus financiers en temps réel pour tous les membres."
+      },
+      "wallet": {
+        "title": "Portefeuille Digital",
+        "text": "Gérer en toute sécurité les fonds de la coopérative."
+      },
+      "audit": {
+        "title": "Auto-Audit",
+        "text": "Conformité et rapports automatisés."
+      },
+      "alerts": {
+        "title": "Alertes Intelligentes",
+        "text": "Notifications pour les activités importantes."
+      }
+    }
   },
   "Problem": {
-    "title": "Pourquoi CoopLedger est une nécessité ?",
+    "title": "Pourquoi CoopLedger est Essentiel",
     "description": "Le manque de transparence n'est pas seulement un problème administratif, c'est un frein au développement rural.",
     "cards": {
       "opacity": {
@@ -23,7 +113,7 @@
         "text": "+60% des coopératives togolaises gèrent leur comptabilité uniquement sur papier/cash."
       },
       "risk": {
-        "title": "Risque",
+        "title": "Risque de Détournement",
         "text": "15 à 20% des fonds collectifs font l'objet de détournements chaque année."
       },
       "trust": {
@@ -31,7 +121,7 @@
         "text": "70% des membres citent le manque de transparence comme principale raison de méfiance."
       },
       "exclusion": {
-        "title": "Exclusion",
+        "title": "Exclusion Financière",
         "text": "Seulement 0,2% des prêts bancaires sont consentis au secteur agricole."
       }
     }
@@ -39,6 +129,7 @@
   "Solution": {
     "title": "La Machine à Confiance",
     "description": "Nous utilisons la technologie blockchain pour transformer la méfiance en certitude.",
+    "blockchain": "Infrastructure Blockchain d'Entreprise",
     "pillars": {
       "ledger": {
         "title": "Registre Immuable",
@@ -59,28 +150,76 @@
     "description": "Plus qu'un outil technique, un levier de croissance pour les agriculteurs.",
     "cards": {
       "revenue": {
-        "title": "Revenus",
+        "title": "Augmentation des Revenus",
         "text": "Augmentation des revenus des agriculteurs de 30 à 50% grâce à une gestion saine et aux achats groupés."
       },
       "funding": {
-        "title": "Financement",
+        "title": "Accès au Financement",
         "text": "Les coopératives transparentes lèvent en moyenne 3 fois plus de fonds externes (Banques, IFAD)."
       }
     }
   },
+  "UseCases": {
+    "title": "Cas d'Usage",
+    "description": "Comment les coopératives togolaises utilisent CoopLedger aujourd'hui.",
+    "items": {
+      "seeds": {
+        "title": "Achat de Semences",
+        "text": "Suivre les achats et distributions de semences collectivement."
+      },
+      "equipment": {
+        "title": "Partage d'Équipement",
+        "text": "Gérer les équipements agricoles partagés."
+      },
+      "training": {
+        "title": "Formation des Agriculteurs",
+        "text": "Financer et suivre les programmes de formation."
+      },
+      "storage": {
+        "title": "Stockage & Vente",
+        "text": "Enregistrer le stockage et les ventes collectives."
+      }
+    }
+  },
+  "Partners": {
+    "title": "Nos Partenaires",
+    "description": "CoopLedger travaille avec les institutions leaders pour maximiser l'impact.",
+    "cta_title": "Partenariat avec Nous",
+    "cta_text": "Rejoignez la transformation de l'agriculture togolaise.",
+    "cta_button": "Contactez-Nous",
+    "support_title": "Support que Nous Proposons",
+    "support_text": "Différents types de support disponibles pour votre coopérative:",
+    "support_types": {
+      "funding": "Accès au Financement",
+      "technical": "Support Technique",
+      "training": "Programmes de Formation"
+    },
+    "items": {
+      "ministry": { "name": "Ministère de l'Agriculture" },
+      "ifad": { "name": "FIDA" },
+      "giz": { "name": "GIZ" },
+      "worldbank": { "name": "Banque Mondiale" },
+      "fao": { "name": "FAO" },
+      "bank": { "name": "Banques Togolaises" }
+    }
+  },
   "Footer": {
     "slogan": "Pour une agriculture togolaise prospère et transparente.",
-    "contact_title": "Contact Partenaires",
-    "contact_placeholder": "Votre organisation (Ministère, GIZ, IFAD...)",
-    "contact_name": "Nom",
-    "contact_email": "Email",
-    "contact_message": "Votre message",
-    "contact_button": "Envoyer la demande",
     "copyright": "© 2026 CoopLedger. Tous droits réservés.",
     "links": {
-      "conditions": "Conditions",
-      "privacy": "Confidentialité",
-      "contact": "Contact"
+      "product": "Produit",
+      "solution": "Solution",
+      "features": "Fonctionnalités",
+      "how": "Comment Ça Marche",
+      "partners": "Partenaires",
+      "company": "Entreprise",
+      "about": "À Propos",
+      "use_cases": "Cas d'Usage",
+      "contact": "Contact",
+      "legal": "Légal",
+      "privacy": "Politique de Confidentialité",
+      "terms": "Conditions d'Utilisation",
+      "cookies": "Politique des Cookies"
     }
   }
 }
