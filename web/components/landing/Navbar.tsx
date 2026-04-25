@@ -28,33 +28,6 @@ export function Navbar() {
         </div>
       </Link>
 
-      <div className="hidden lg:flex items-center gap-8 text-sm font-medium">
-        {navLinks.map((link) => (
-          <Link key={link.href} href={link.href} className="text-muted-foreground hover:text-foreground transition-colors">
-            {link.label}
-          </Link>
-        ))}
-      </div>
-
-      <div className="hidden lg:flex items-center gap-2">
-        <Link
-          href="/#how-it-works"
-          className="inline-flex items-center rounded-full bg-[#7cc6fe] px-4 py-2 text-sm font-semibold text-zinc-950 hover:bg-[#66baf9] transition-colors"
-        >
-          {t("Navbar.launch")}
-        </Link>
-        <LocaleToggle />
-        <ThemeToggle />
-      </div>
-
-      <button
-        className="lg:hidden p-2 rounded-lg hover:bg-muted transition-colors"
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label={isOpen ? "Close menu" : "Open menu"}
-      >
-        {isOpen ? <IconX size={24} /> : <IconMenu2 size={24} />}
-      </button>
-
           <div className="hidden lg:flex items-center gap-7 text-sm font-medium">
             {navLinks.map((link) => (
               <Link
