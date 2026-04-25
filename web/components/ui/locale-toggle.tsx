@@ -17,40 +17,22 @@ export function LocaleToggle() {
 
   const nextLocale = locale === "en" ? "fr" : "en";
   const currentFlag = localeFlags[locale];
-  const nextFlag = localeFlags[nextLocale];
 
   const toggleLocale = () => {
-    const newPathname = pathname.replace(`/${locale}`, `/${nextLocale}`);
+    const newPathname = pathname.startsWith(`/${locale}`)
+      ? pathname.replace(`/${locale}`, `/${nextLocale}`)
+      : `/${nextLocale}${pathname}`;
     router.push(newPathname);
   };
 
   return (
     <button
       onClick={toggleLocale}
-      className="group relative flex items-center gap-2 px-3 py-2 rounded-full bg-muted/50 hover:bg-accent transition-all duration-300 border border-transparent hover:border-primary/20"
+      className="group flex items-center gap-2 rounded-full border border-border/70 bg-background/80 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground hover:bg-muted/70 transition-all duration-300"
       aria-label={`Switch to ${localeFlags[nextLocale].label}`}
     >
-      <Image 
-        src={currentFlag.flag}
-        alt={currentFlag.label}
-        width={24}
-        height={16}
-        className="rounded-sm object-cover"
-        unoptimized
-      />
-      <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors uppercase">
-        {locale}
-      </span>
-      <div className="absolute right-2 opacity-0 group-hover:opacity-100 transition-opacity -rotate-90">
-        <Image 
-          src={nextFlag.flag}
-          alt={nextFlag.label}
-          width={16}
-          height={10}
-          className="rounded-sm"
-          unoptimized
-        />
-      </div>
+      <Image src={currentFlag.flag} alt={currentFlag.label} width={18} height={12} className="rounded-sm object-cover" unoptimized />
+      {locale}
     </button>
   );
 }

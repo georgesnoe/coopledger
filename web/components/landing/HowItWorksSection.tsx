@@ -52,22 +52,17 @@ export function HowItWorksSection() {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 items-center">
-          <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl">
+          <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl border border-border bg-black">
             <video
-              autoPlay
-              loop
-              muted
-              playsInline
               className="w-full h-full object-cover"
+              poster="https://images.pexels.com/photos/96715/pexels-photo-96715.jpeg?auto=compress&cs=tinysrgb&w=1200"
+              controls
+              preload="metadata"
             >
-              <source src="https://videos.pexels.com/video-files/6551440/6551440-hd_1920_1080_25fps.mp4" type="video/mp4" />
+              <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4" type="video/mp4" />
             </video>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            <div className="absolute bottom-6 left-6 right-6">
-              <p className="text-white font-medium">{t("HowItWorks.demo_caption")}</p>
-            </div>
           </div>
-          
+
           <div className="space-y-6">
             <h3 className="text-2xl font-bold">{t("HowItWorks.benefits_title")}</h3>
             <ul className="space-y-4">

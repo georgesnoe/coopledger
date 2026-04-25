@@ -20,7 +20,7 @@ export function ProblemSection() {
         <div 
           className="absolute inset-0 opacity-[0.03] dark:opacity-[0.02]"
           style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1524174476329-a6a8d9e1e3d8?w=1200&auto=format&fit=crop')",
+            backgroundImage: "url('https://images.pexels.com/photos/2382904/pexels-photo-2382904.jpeg?auto=compress&cs=tinysrgb&w=1400')",
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}

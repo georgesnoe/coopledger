@@ -22,7 +22,7 @@ export function AboutSection() {
           <div className="relative order-2 lg:order-1">
             <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl">
               <Image 
-                src="https://images.unsplash.com/photo-1524174476329-a6a8d9e1e3d8?w=800&auto=format&fit=crop"
+                src="https://images.pexels.com/photos/2382904/pexels-photo-2382904.jpeg?auto=compress&cs=tinysrgb&w=1200"
                 alt="Togolese farmers"
                 fill
                 className="object-cover"

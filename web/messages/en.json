@@ -2,15 +2,25 @@
   "Navbar": {
     "links": {
       "about": "About",
-      "how": "How It Works",
-      "features": "Features",
       "solution": "Solution",
-      "partners": "Partners"
-    }
+      "impact": "Impact",
+      "technology": "Technology",
+      "team": "Team"
+    },
+    "launch": "Launch App"
   },
   "Hero": {
     "title": "Cultivating transparency, harvesting trust.",
-    "subtitle": "The blockchain platform securing the governance of agricultural cooperatives in Togo and opening the doors to financing."
+    "subtitle": "The blockchain platform securing the governance of agricultural cooperatives in Togo and opening the doors to financing.",
+    "stats": {
+      "loans": "share of bank loans reaching agriculture",
+      "losses": "collective funds lost yearly",
+      "trust": "members report transparency issues"
+    },
+    "balanceLabel": "Verified balance",
+    "balanceNote": "Audited by all members in real time",
+    "watchDemo": "Watch demos",
+    "badge": "CoopLedger • Blockchain for cooperatives"
   },
   "About": {
     "title": "About CoopLedger",
@@ -195,12 +205,24 @@
       "training": "Training Programs"
     },
     "items": {
-      "ministry": { "name": "Ministry of Agriculture" },
-      "ifad": { "name": "IFAD" },
-      "giz": { "name": "GIZ" },
-      "worldbank": { "name": "World Bank" },
-      "fao": { "name": "FAO" },
-      "bank": { "name": "Togolese Banks" }
+      "ministry": {
+        "name": "Ministry of Agriculture"
+      },
+      "ifad": {
+        "name": "IFAD"
+      },
+      "giz": {
+        "name": "GIZ"
+      },
+      "worldbank": {
+        "name": "World Bank"
+      },
+      "fao": {
+        "name": "FAO"
+      },
+      "bank": {
+        "name": "Togolese Banks"
+      }
     }
   },
   "Footer": {
@@ -219,7 +241,47 @@
       "legal": "Legal",
       "privacy": "Privacy Policy",
       "terms": "Terms of Service",
-      "cookies": "Cookie Policy"
+      "cookies": "Cookie Policy",
+      "impact": "Impact",
+      "team": "Team"
+    },
+    "form": {
+      "title": "Institutional contact form",
+      "text": "Are you a ministry, donor, bank or development partner? Let us design a pilot tailored to your cooperative network.",
+      "name": "Institution name",
+      "email": "Professional email",
+      "message": "Tell us your objective, region, and expected deployment timeline.",
+      "submit": "Send request"
     }
+  },
+  "Media": {
+    "title": "Real Stories from the Field",
+    "description": "Concrete examples from agricultural cooperatives, with video explainers and photos of day-to-day governance.",
+    "videos": {
+      "finance": {
+        "title": "Financial transparency in action",
+        "text": "A practical view of how clean transaction trails improve loan decisions and cooperative governance."
+      },
+      "coops": {
+        "title": "From paper to digital governance",
+        "text": "See how digital records and member oversight reduce disputes and speed up operations."
+      }
+    },
+    "gallery": {
+      "meeting": {
+        "title": "General assembly with full traceability",
+        "text": "Each member can verify decisions, signatures and payment statuses."
+      },
+      "harvest": {
+        "title": "Harvest financing managed collectively",
+        "text": "Inputs and reimbursements are tracked by campaign and village."
+      },
+      "logistics": {
+        "title": "Storage and logistics monitoring",
+        "text": "Stock movements are shared instantly with leaders and members."
+      }
+    },
+    "videoLabel": "Video case study",
+    "badge": "Media Stories"
   }
 }
