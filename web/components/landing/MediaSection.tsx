@@ -25,11 +25,11 @@ const gallery = [
 const videos = [
   {
     id: "finance",
-    embed: "https://www.youtube.com/embed/Yo1M5Y2M8ic",
+    embed: "https://www.youtube.com/embed/R5Z9lsuZ3bA",
   },
   {
     id: "coops",
-    embed: "https://www.youtube.com/embed/YH6Nq4_7rYQ",
+    embed: "https://www.youtube.com/embed/pdTfErISLx0",
   },
 ];
 
