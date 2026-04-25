@@ -17,7 +17,7 @@ export function PartnersSection() {
   const t = useTranslations();
 
   return (
-    <section id="partners" className="py-20 sm:py-32">
+    <section id="team" className="py-20 sm:py-32">
       <div className="container px-4 sm:px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl sm:text-4xl font-serif font-bold mb-4">

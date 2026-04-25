@@ -8,6 +8,7 @@ import { SolutionSection } from "@/components/landing/SolutionSection";
 import { ImpactSection } from "@/components/landing/ImpactSection";
 import { UseCasesSection } from "@/components/landing/UseCasesSection";
 import { PartnersSection } from "@/components/landing/PartnersSection";
+import { MediaSection } from "@/components/landing/MediaSection";
 import { Footer } from "@/components/landing/Footer";
 
 export default function LandingPage() {
@@ -22,6 +23,7 @@ export default function LandingPage() {
       <SolutionSection />
       <ImpactSection />
       <UseCasesSection />
+      <MediaSection />
       <PartnersSection />
       <Footer />
     </main>

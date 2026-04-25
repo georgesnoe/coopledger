@@ -5,10 +5,10 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 
 const useCases = [
-  { id: 'seeds', image: 'https://images.unsplash.com/photo-1574943320219-553eb5f72a88?w=600&auto=format&fit=crop' },
-  { id: 'equipment', image: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=600&auto=format&fit=crop' },
-  { id: 'training', image: 'https://images.unsplash.com/photo-1523240795612-9a054b0b4f6e?w=600&auto=format&fit=crop' },
-  { id: 'storage', image: 'https://images.unsplash.com/photo-1580674684081-7618ee9c7c90?w=600&auto=format&fit=crop' },
+  { id: 'seeds', image: 'https://images.pexels.com/photos/547263/pexels-photo-547263.jpeg?auto=compress&cs=tinysrgb&w=900' },
+  { id: 'equipment', image: 'https://images.pexels.com/photos/162801/farmer-machine-tractor-farming-162801.jpeg?auto=compress&cs=tinysrgb&w=900' },
+  { id: 'training', image: 'https://images.pexels.com/photos/8926559/pexels-photo-8926559.jpeg?auto=compress&cs=tinysrgb&w=900' },
+  { id: 'storage', image: 'https://images.pexels.com/photos/2252584/pexels-photo-2252584.jpeg?auto=compress&cs=tinysrgb&w=900' },
 ];
 
 export function UseCasesSection() {

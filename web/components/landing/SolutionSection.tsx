@@ -50,7 +50,7 @@ export function SolutionSection() {
         <div className="flex justify-center mt-8 sm:mt-12">
           <div className="relative w-64 sm:w-80 h-40 sm:h-48 rounded-2xl overflow-hidden shadow-2xl border border-border">
             <Image 
-              src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&auto=format&fit=crop"
+              src="https://images.pexels.com/photos/6802046/pexels-photo-6802046.jpeg?auto=compress&cs=tinysrgb&w=1200"
               alt="Blockchain Technology"
               fill
               className="object-cover opacity-80 dark:opacity-60"

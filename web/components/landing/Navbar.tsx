@@ -14,22 +14,17 @@ export function Navbar() {
 
   const navLinks = [
     { href: "#about", label: t("Navbar.links.about") },
-    { href: "#how-it-works", label: t("Navbar.links.how") },
-    { href: "#features", label: t("Navbar.links.features") },
     { href: "#solution", label: t("Navbar.links.solution") },
-    { href: "#partners", label: t("Navbar.links.partners") },
+    { href: "#impact", label: t("Navbar.links.impact") },
+    { href: "#technology", label: t("Navbar.links.technology") },
+    { href: "#team", label: t("Navbar.links.team") },
   ];
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-6 py-3 bg-background/90 backdrop-blur-md border-b border-border/50">
       <Link href="/" className="flex items-center gap-2">
         <div className="relative w-10 h-10 sm:w-12 sm:h-12">
-          <Image 
-            src="/logo.png" 
-            alt="CoopLedger" 
-            fill
-            className="object-contain"
-          />
+          <Image src="/logo.png" alt="CoopLedger" fill className="object-contain" />
         </div>
       </Link>
 
@@ -42,11 +37,17 @@ export function Navbar() {
       </div>
 
       <div className="hidden lg:flex items-center gap-2">
+        <Link
+          href="/#how-it-works"
+          className="inline-flex items-center rounded-full bg-[#7cc6fe] px-4 py-2 text-sm font-semibold text-zinc-950 hover:bg-[#66baf9] transition-colors"
+        >
+          {t("Navbar.launch")}
+        </Link>
         <LocaleToggle />
         <ThemeToggle />
       </div>
 
-      <button 
+      <button
         className="lg:hidden p-2 rounded-lg hover:bg-muted transition-colors"
         onClick={() => setIsOpen(!isOpen)}
         aria-label={isOpen ? "Close menu" : "Open menu"}
@@ -58,9 +59,9 @@ export function Navbar() {
         <div className="lg:hidden absolute top-full left-0 right-0 bg-background/95 backdrop-blur-md border-b border-border p-4 space-y-4 animate-in slide-in-from-top-2">
           <div className="flex flex-col gap-2">
             {navLinks.map((link) => (
-              <Link 
-                key={link.href} 
-                href={link.href} 
+              <Link
+                key={link.href}
+                href={link.href}
                 className="text-base font-medium hover:text-primary transition-colors py-2"
                 onClick={() => setIsOpen(false)}
               >
@@ -68,6 +69,13 @@ export function Navbar() {
               </Link>
             ))}
           </div>
+          <Link
+            href="/#how-it-works"
+            className="inline-flex items-center rounded-full bg-[#7cc6fe] px-4 py-2 text-sm font-semibold text-zinc-950"
+            onClick={() => setIsOpen(false)}
+          >
+            {t("Navbar.launch")}
+          </Link>
           <div className="flex items-center gap-3 pt-2 border-t border-border">
             <LocaleToggle />
             <ThemeToggle />
