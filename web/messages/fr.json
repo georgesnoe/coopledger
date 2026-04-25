@@ -259,6 +259,34 @@
     "description": "Des cas concrets de coopératives agricoles avec des vidéos explicatives et des photos du quotidien.",
     "videos": {
       "finance": {
+        "title": "Comment la transparence débloque le crédit",
+        "text": "Les banques financent plus vite quand les transactions et votes sont vérifiables."
+      },
+      "coops": {
+        "title": "Outils digitaux pour organisations paysannes",
+        "text": "Une gouvernance pilotée par les membres améliore discipline et confiance."
+      }
+    },
+    "gallery": {
+      "meeting": {
+        "title": "Assemblée générale avec traçabilité complète",
+        "text": "Chaque membre vérifie les décisions, signatures et statuts de paiement."
+      },
+      "harvest": {
+        "title": "Financement de campagne géré collectivement",
+        "text": "Intrants et remboursements sont suivis par campagne et par village."
+      },
+      "logistics": {
+        "title": "Suivi stockage et logistique",
+        "text": "Les mouvements de stock sont partagés instantanément."
+      }
+    }
+  },
+  "Media": {
+    "title": "Histoires réelles du terrain",
+    "description": "Des cas concrets de coopératives agricoles avec des vidéos explicatives et des photos du quotidien.",
+    "videos": {
+      "finance": {
         "title": "Transparence financière en action",
         "text": "Un aperçu pratique de la manière dont la traçabilité facilite le crédit et la gouvernance coopérative."
       },

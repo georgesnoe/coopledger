@@ -259,6 +259,34 @@
     "description": "Concrete examples from agricultural cooperatives, with video explainers and photos of day-to-day governance.",
     "videos": {
       "finance": {
+        "title": "How transparent finance unlocks credit",
+        "text": "Banks lend faster when transactions and votes are verifiable."
+      },
+      "coops": {
+        "title": "Digital tools for farmer organizations",
+        "text": "Member-led governance improves payment discipline and trust."
+      }
+    },
+    "gallery": {
+      "meeting": {
+        "title": "General assembly with full traceability",
+        "text": "Each member can verify decisions, signatures and payment statuses."
+      },
+      "harvest": {
+        "title": "Harvest financing managed collectively",
+        "text": "Inputs and reimbursements are tracked by campaign and village."
+      },
+      "logistics": {
+        "title": "Storage and logistics monitoring",
+        "text": "Stock movements are shared instantly with leaders and members."
+      }
+    }
+  },
+  "Media": {
+    "title": "Real Stories from the Field",
+    "description": "Concrete examples from agricultural cooperatives, with video explainers and photos of day-to-day governance.",
+    "videos": {
+      "finance": {
         "title": "Financial transparency in action",
         "text": "A practical view of how clean transaction trails improve loan decisions and cooperative governance."
       },

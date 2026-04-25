@@ -53,14 +53,15 @@ export function HowItWorksSection() {
 
         <div className="grid lg:grid-cols-2 gap-8 items-center">
           <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl border border-border bg-black">
-            <video
-              className="w-full h-full object-cover"
-              poster="https://images.pexels.com/photos/96715/pexels-photo-96715.jpeg?auto=compress&cs=tinysrgb&w=1200"
-              controls
-              preload="metadata"
-            >
-              <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4" type="video/mp4" />
-            </video>
+            <iframe
+              src="https://www.youtube.com/embed/bA8KvL8PsjQ"
+              title={t("HowItWorks.demo_caption")}
+              className="w-full h-full"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
           </div>
 
           <div className="space-y-6">

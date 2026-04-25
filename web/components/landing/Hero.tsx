@@ -16,6 +16,7 @@ export function Hero() {
         </video>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(124,198,254,0.3),transparent_40%),radial-gradient(circle_at_80%_80%,rgba(54,143,204,0.2),transparent_45%)]" />
         <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/35" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/75 to-background/20" />
       </div>
 
       <div className="container relative z-10 px-4 sm:px-6 py-12 sm:py-20">
@@ -46,7 +47,7 @@ export function Hero() {
               { value: "15-20%", label: t("Hero.stats.losses") },
               { value: "70%", label: t("Hero.stats.trust") },
             ].map((stat) => (
-              <div key={stat.value} className="rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md p-3 sm:p-4 shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
+              <div key={stat.value} className="rounded-2xl border border-white/20 bg-white/10 backdrop-blur p-3 sm:p-4">
                 <div className="text-lg sm:text-2xl font-bold text-foreground">{stat.value}</div>
                 <p className="text-xs sm:text-sm text-muted-foreground">{stat.label}</p>
               </div>
@@ -54,9 +55,8 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="hidden xl:block absolute right-12 top-1/2 -translate-y-1/2 w-[350px]">
-          <div className="absolute -inset-10 bg-[radial-gradient(circle,rgba(124,198,254,0.6),transparent_70%)] blur-2xl" />
-          <div className="relative w-full aspect-[9/16] rounded-[2.5rem] border-[8px] border-zinc-900 shadow-[0_0_70px_rgba(0,0,0,0.35)] overflow-hidden bg-zinc-900">
+        <div className="hidden xl:block absolute right-12 top-1/2 -translate-y-1/2 w-[340px]">
+          <div className="relative w-full aspect-[9/16] rounded-[2.5rem] border-[8px] border-zinc-900 shadow-[0_0_60px_rgba(0,0,0,0.6)] overflow-hidden bg-zinc-900">
             <Image
               src="https://images.pexels.com/photos/4968630/pexels-photo-4968630.jpeg?auto=compress&cs=tinysrgb&w=800"
               alt="Cooperative dashboard"
@@ -64,7 +64,7 @@ export function Hero() {
               className="object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-            <div className="absolute bottom-6 left-4 right-4 space-y-3">
+            <div className="absolute bottom-6 left-4 right-4">
               <div className="bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md rounded-2xl p-4 shadow-xl space-y-1">
                 <p className="text-xs text-zinc-500 dark:text-zinc-400">{t("Hero.balanceLabel")}</p>
                 <p className="text-xl font-bold text-green-600 dark:text-green-400">1,250,000 XOF</p>
