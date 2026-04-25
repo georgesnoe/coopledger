@@ -19,7 +19,8 @@
     },
     "balanceLabel": "Verified balance",
     "balanceNote": "Audited by all members in real time",
-    "watchDemo": "Watch demos"
+    "watchDemo": "Watch demos",
+    "badge": "CoopLedger • Blockchain for cooperatives"
   },
   "About": {
     "title": "About CoopLedger",
@@ -280,6 +281,7 @@
         "text": "Stock movements are shared instantly with leaders and members."
       }
     },
-    "videoLabel": "Video case study"
+    "videoLabel": "Video case study",
+    "badge": "Media Stories"
   }
 }

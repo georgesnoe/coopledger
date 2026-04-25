@@ -19,7 +19,8 @@
     },
     "balanceLabel": "Solde vérifié",
     "balanceNote": "Audité en temps réel par tous les membres",
-    "watchDemo": "Voir les démos"
+    "watchDemo": "Voir les démos",
+    "badge": "CoopLedger • Blockchain pour coopératives"
   },
   "About": {
     "title": "À Propos de CoopLedger",
@@ -280,6 +281,7 @@
         "text": "Les mouvements de stock sont partagés instantanément."
       }
     },
-    "videoLabel": "Étude vidéo"
+    "videoLabel": "Étude vidéo",
+    "badge": "Histoires média"
   }
 }

@@ -13,7 +13,6 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
-    { href: "#about", label: t("Navbar.links.about") },
     { href: "#solution", label: t("Navbar.links.solution") },
     { href: "#impact", label: t("Navbar.links.impact") },
     { href: "#technology", label: t("Navbar.links.technology") },

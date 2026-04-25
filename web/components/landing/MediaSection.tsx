@@ -44,7 +44,7 @@ export function MediaSection() {
     <section id="media" className="py-24 sm:py-32 bg-gradient-to-b from-background to-[#eef6ff]/60 dark:to-zinc-950/50">
       <div className="container px-4 sm:px-6 space-y-14">
         <div className="text-center max-w-3xl mx-auto">
-          <p className="inline-flex items-center rounded-full border border-[#7cc6fe]/50 bg-[#7cc6fe]/10 px-4 py-1 text-xs font-semibold tracking-wider uppercase text-[#368fcc]">Media Stories</p>
+          <p className="inline-flex items-center rounded-full border border-[#7cc6fe]/50 bg-[#7cc6fe]/10 px-4 py-1 text-xs font-semibold tracking-wider uppercase text-[#368fcc]">{t("Media.badge")}</p>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold mt-4 mb-4">{t("Media.title")}</h2>
           <p className="text-lg text-muted-foreground">{t("Media.description")}</p>
         </div>

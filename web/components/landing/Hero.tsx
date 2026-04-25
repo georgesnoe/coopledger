@@ -21,7 +21,7 @@ export function Hero() {
       <div className="container relative z-10 px-4 sm:px-6 py-12 sm:py-20">
         <div className="max-w-2xl">
           <p className="inline-flex rounded-full border border-[#7cc6fe]/60 bg-[#7cc6fe]/10 px-4 py-1 text-xs sm:text-sm font-semibold tracking-wider uppercase text-[#3188c2]">
-            CoopLedger • Blockchain for cooperatives
+            {t("Hero.badge")}
           </p>
           <h1 className="mt-4 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold leading-tight text-foreground mb-6">
             {t("Hero.title")}
