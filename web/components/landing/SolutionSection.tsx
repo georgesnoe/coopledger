@@ -3,6 +3,7 @@
 import React from "react";
 import { useTranslations } from "next-intl";
 import { IconShieldCheck, IconCheck, IconLayoutDashboard } from "@tabler/icons-react";
+import Image from "next/image";
 
 const solutionPillars = [
   { id: 'ledger', icon: IconShieldCheck, color: 'bg-blue-500' },
@@ -44,6 +45,21 @@ export function SolutionSection() {
               </div>
             );
           })}
+        </div>
+
+        <div className="flex justify-center mt-8 sm:mt-12">
+          <div className="relative w-64 sm:w-80 h-40 sm:h-48 rounded-2xl overflow-hidden shadow-2xl border border-border">
+            <Image 
+              src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&auto=format&fit=crop"
+              alt="Blockchain Technology"
+              fill
+              className="object-cover opacity-80 dark:opacity-60"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+            <div className="absolute bottom-3 left-3 right-3 text-center">
+              <span className="text-xs sm:text-sm font-medium text-foreground">{t("Solution.blockchain")}</span>
+            </div>
+          </div>
         </div>
       </div>
       

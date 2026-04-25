@@ -17,7 +17,6 @@ export function Navbar() {
     { href: "#solution", label: t("Navbar.links.solution") },
     { href: "#impact", label: t("Navbar.links.impact") },
     { href: "#tech", label: t("Navbar.links.tech") },
-    { href: "#team", label: t("Navbar.links.team") },
   ];
 
   return (

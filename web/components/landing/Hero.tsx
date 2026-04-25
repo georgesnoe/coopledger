@@ -9,14 +9,17 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16 sm:pt-20">
-      <div 
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: "url('https://images.unsplash.com/photo-1500382017468-9049fed74eg3?q=80&w=2000&auto=format&fit=crop')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }}
-      >
+      <div className="absolute inset-0 z-0">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover"
+          poster="https://images.unsplash.com/photo-1500382017468-9049fed74eg3?q=80&w=2000&auto=format&fit=crop"
+        >
+          <source src="https://videos.pexels.com/video-files/3129957/3129957-uhd_2560_1440_30fps.mp4" type="video/mp4" />
+        </video>
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background/80 to-background" />
       </div>
 

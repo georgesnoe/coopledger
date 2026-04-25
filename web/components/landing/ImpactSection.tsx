@@ -13,8 +13,19 @@ export function ImpactSection() {
   const t = useTranslations();
 
   return (
-    <section id="impact" className="py-16 sm:py-24 bg-zinc-50 dark:bg-zinc-900/50">
-      <div className="container px-4 sm:px-6">
+    <section id="impact" className="py-16 sm:py-24 relative overflow-hidden">
+      <div className="absolute inset-0 z-0">
+        <div 
+          className="absolute inset-0 opacity-[0.03] dark:opacity-[0.02]"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1592982537447-6f2a5a3c0e4c?w=1200&auto=format&fit=crop')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-900/50 dark:to-zinc-900" />
+      </div>
+      <div className="container px-4 sm:px-6 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 space-y-4">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold">
             {t("Impact.title")}
