@@ -2,15 +2,24 @@
   "Navbar": {
     "links": {
       "about": "À Propos",
-      "how": "Comment Ça Marche",
-      "features": "Fonctionnalités",
       "solution": "Solution",
-      "partners": "Partenaires"
-    }
+      "impact": "Impact",
+      "technology": "Technologie",
+      "team": "Équipe"
+    },
+    "launch": "Lancer l'App"
   },
   "Hero": {
     "title": "Cultiver la transparence, récolter la confiance.",
-    "subtitle": "La plateforme blockchain qui sécurise la gouvernance des coopératives agricoles au Togo et ouvre les portes du financement."
+    "subtitle": "La plateforme blockchain qui sécurise la gouvernance des coopératives agricoles au Togo et ouvre les portes du financement.",
+    "stats": {
+      "loans": "des prêts bancaires vont à l’agriculture",
+      "losses": "des fonds collectifs disparaissent chaque année",
+      "trust": "des membres citent l’opacité comme problème majeur"
+    },
+    "balanceLabel": "Solde vérifié",
+    "balanceNote": "Audité en temps réel par tous les membres",
+    "watchDemo": "Voir les démos"
   },
   "About": {
     "title": "À Propos de CoopLedger",
@@ -195,12 +204,24 @@
       "training": "Programmes de Formation"
     },
     "items": {
-      "ministry": { "name": "Ministère de l'Agriculture" },
-      "ifad": { "name": "FIDA" },
-      "giz": { "name": "GIZ" },
-      "worldbank": { "name": "Banque Mondiale" },
-      "fao": { "name": "FAO" },
-      "bank": { "name": "Banques Togolaises" }
+      "ministry": {
+        "name": "Ministère de l'Agriculture"
+      },
+      "ifad": {
+        "name": "FIDA"
+      },
+      "giz": {
+        "name": "GIZ"
+      },
+      "worldbank": {
+        "name": "Banque Mondiale"
+      },
+      "fao": {
+        "name": "FAO"
+      },
+      "bank": {
+        "name": "Banques Togolaises"
+      }
     }
   },
   "Footer": {
@@ -219,7 +240,46 @@
       "legal": "Légal",
       "privacy": "Politique de Confidentialité",
       "terms": "Conditions d'Utilisation",
-      "cookies": "Politique des Cookies"
+      "cookies": "Politique des Cookies",
+      "impact": "Impact",
+      "team": "Équipe"
+    },
+    "form": {
+      "title": "Formulaire de contact institutionnel",
+      "text": "Vous êtes un ministère, bailleur, banque ou partenaire de développement ? Construisons un pilote adapté à votre réseau de coopératives.",
+      "name": "Nom de l’institution",
+      "email": "Email professionnel",
+      "message": "Décrivez votre objectif, votre zone et votre calendrier de déploiement.",
+      "submit": "Envoyer la demande"
     }
+  },
+  "Media": {
+    "title": "Histoires réelles du terrain",
+    "description": "Des cas concrets de coopératives agricoles avec des vidéos explicatives et des photos du quotidien.",
+    "videos": {
+      "finance": {
+        "title": "Transparence financière en action",
+        "text": "Un aperçu pratique de la manière dont la traçabilité facilite le crédit et la gouvernance coopérative."
+      },
+      "coops": {
+        "title": "Du papier à la gouvernance digitale",
+        "text": "Découvrez comment les registres numériques réduisent les litiges et accélèrent les opérations."
+      }
+    },
+    "gallery": {
+      "meeting": {
+        "title": "Assemblée générale avec traçabilité complète",
+        "text": "Chaque membre vérifie les décisions, signatures et statuts de paiement."
+      },
+      "harvest": {
+        "title": "Financement de campagne géré collectivement",
+        "text": "Intrants et remboursements sont suivis par campagne et par village."
+      },
+      "logistics": {
+        "title": "Suivi stockage et logistique",
+        "text": "Les mouvements de stock sont partagés instantanément."
+      }
+    },
+    "videoLabel": "Étude vidéo"
   }
 }
