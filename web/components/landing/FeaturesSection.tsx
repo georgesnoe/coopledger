@@ -18,7 +18,7 @@ export function FeaturesSection() {
   const t = useTranslations();
 
   return (
-    <section id="features" className="py-20 sm:py-32 bg-zinc-50 dark:bg-zinc-900/50">
+    <section id="technology" className="py-20 sm:py-32 bg-zinc-50 dark:bg-zinc-900/50">
       <div className="container px-4 sm:px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl sm:text-4xl font-serif font-bold mb-4">
@@ -50,7 +50,7 @@ export function FeaturesSection() {
         <div className="mt-16 grid lg:grid-cols-2 gap-8 items-center">
           <div className="relative aspect-square rounded-3xl overflow-hidden shadow-2xl">
             <Image 
-              src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&auto=format&fit=crop"
+              src="https://images.pexels.com/photos/6802046/pexels-photo-6802046.jpeg?auto=compress&cs=tinysrgb&w=1200"
               alt="Blockchain"
               fill
               className="object-cover"

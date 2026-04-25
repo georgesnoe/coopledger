@@ -18,7 +18,7 @@ export function ImpactSection() {
         <div 
           className="absolute inset-0 opacity-[0.03] dark:opacity-[0.02]"
           style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1592982537447-6f2a5a3c0e4c?w=1200&auto=format&fit=crop')",
+            backgroundImage: "url('https://images.pexels.com/photos/51947/tractor-agriculture-farm-vehicle-51947.jpeg?auto=compress&cs=tinysrgb&w=1400')",
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}

@@ -10,17 +10,10 @@ export function Hero() {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden pt-20">
       <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover"
-          poster="https://images.unsplash.com/photo-1500382017468-9049fed74eg3?q=80&w=2000&auto=format&fit=crop"
-        >
-          <source src="https://videos.pexels.com/video-files/3129957/3129957-uhd_2560_1440_30fps.mp4" type="video/mp4" />
+        <video autoPlay loop muted playsInline className="w-full h-full object-cover" poster="https://images.pexels.com/photos/2933243/pexels-photo-2933243.jpeg?auto=compress&cs=tinysrgb&w=1800">
+          <source src="https://cdn.coverr.co/videos/coverr-rice-fields-from-above-1579/1080p.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/75 to-background/20" />
       </div>
 
       <div className="container relative z-10 px-4 sm:px-6 py-12 sm:py-20">
@@ -28,30 +21,41 @@ export function Hero() {
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold leading-tight text-foreground mb-6">
             {t("Hero.title")}
           </h1>
-          <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed mb-8 max-w-xl">
-            {t("Hero.subtitle")}
-          </p>
+          <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed mb-8 max-w-xl">{t("Hero.subtitle")}</p>
+          <div className="grid grid-cols-3 max-w-xl gap-3 sm:gap-4">
+            {[
+              { value: "0.2%", label: t("Hero.stats.loans") },
+              { value: "15-20%", label: t("Hero.stats.losses") },
+              { value: "70%", label: t("Hero.stats.trust") },
+            ].map((stat) => (
+              <div key={stat.value} className="rounded-2xl border border-white/20 bg-white/10 backdrop-blur p-3 sm:p-4">
+                <div className="text-lg sm:text-2xl font-bold text-foreground">{stat.value}</div>
+                <p className="text-xs sm:text-sm text-muted-foreground">{stat.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
-        
-        <div className="hidden xl:block absolute right-12 top-1/2 -translate-y-1/2 w-[320px]">
+
+        <div className="hidden xl:block absolute right-12 top-1/2 -translate-y-1/2 w-[340px]">
           <div className="relative w-full aspect-[9/16] rounded-[2.5rem] border-[8px] border-zinc-900 shadow-[0_0_60px_rgba(0,0,0,0.6)] overflow-hidden bg-zinc-900">
-            <Image 
-              src="https://images.unsplash.com/photo-1556742049-0c2eee77fc2e?w=600&auto=format&fit=crop"
-              alt="App Preview"
+            <Image
+              src="https://images.pexels.com/photos/4968630/pexels-photo-4968630.jpeg?auto=compress&cs=tinysrgb&w=800"
+              alt="Cooperative dashboard"
               fill
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
             <div className="absolute bottom-6 left-4 right-4">
-              <div className="bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md rounded-2xl p-4 shadow-xl">
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-1">Account Balance</p>
+              <div className="bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md rounded-2xl p-4 shadow-xl space-y-1">
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">{t("Hero.balanceLabel")}</p>
                 <p className="text-xl font-bold text-green-600 dark:text-green-400">1,250,000 XOF</p>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">{t("Hero.balanceNote")}</p>
               </div>
             </div>
           </div>
         </div>
       </div>
-      
+
       <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent z-10" />
     </section>
   );
