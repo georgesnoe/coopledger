@@ -16,11 +16,11 @@ services:
       - key: APP_PORT
         value: 10000
       - key: WHATSAPP_WEBHOOK
-        sync: true
+        value: http://localhost:3000/webhook/whatsapp
       - key: DB_URI
-        sync: true
+        value: postgres://user:password@localhost/db?options=-csearch_path%3Dgowa
       - key: APP_BASIC_AUTH
-        sync: true
+        value: user:password
       - key: WHATSAPP_PRESENCE_ON_CONNECT
         value: "true"
       - key: WHATSAPP_WEBHOOK_EVENTS
