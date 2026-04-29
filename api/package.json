@@ -19,7 +19,7 @@
     "url": "git+https://github.com/georgesnoe/coopledger.git"
   },
   "type": "module",
-  "main": "dist/index.js",
+  "main": "dist/server.js",
   "scripts": {
     "dev": "nodemon",
     "build": "tsc -b",
