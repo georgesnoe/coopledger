@@ -1,0 +1,25 @@
+{
+  "name": "api",
+  "version": "0.0.0",
+  "description": "CoopLedger API made with ExpressJS",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/georgesnoe/coopledger.git"
+  },
+  "keywords": [
+    "coopledger",
+    "api",
+    "expressjs",
+    "blockchain"
+  ],
+  "author": "Equipe TG-28",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/georgesnoe/coopledger/issues"
+  },
+  "homepage": "https://github.com/georgesnoe/coopledger#readme"
+}
