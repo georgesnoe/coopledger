@@ -5,23 +5,23 @@ services:
     region: frankfurt
     plan: free
     image:
-      url: ghcr.io/aldinokemal/go-whatsapp-web-multidevice:v8.4.0
+      url: "ghcr.io/aldinokemal/go-whatsapp-web-multidevice:v8.4.0"
     envVars:
       - key: APP_ACCOUNT_VALIDATION
         value: "false"
       - key: APP_OS
-        value: CoopLedger
+        value: "CoopLedger"
       - key: APP_DEBUG
         value: "false"
       - key: APP_PORT
-        value: 10000
+        value: "10000"
       - key: WHATSAPP_WEBHOOK
         value: http://localhost:3000/webhook/whatsapp
       - key: DB_URI
-        value: postgres://user:password@localhost/db?options=-csearch_path%3Dgowa
+        value: "postgres://user:password@localhost/db?options=-csearch_path%3Dgowa"
       - key: APP_BASIC_AUTH
-        value: user:password
+        value: "user:password"
       - key: WHATSAPP_PRESENCE_ON_CONNECT
         value: "true"
       - key: WHATSAPP_WEBHOOK_EVENTS
-        value: message
+        value: "message"
