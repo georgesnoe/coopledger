@@ -1,0 +1,30 @@
+services:
+  - type: web
+    runtime: docker
+    name: coopledger-whatsapp
+    region: frankfurt
+    plan: free
+    image:
+      url: ghcr.io/aldinokemal/go-whatsapp-web-multidevice:v8.4.0
+    envVars:
+      - key: APP_ACCOUNT_VALIDATION
+        value: "false"
+      - key: APP_OS
+        value: CoopLedger
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_PORT
+        value: 10000
+      - key: WHATSAPP_WEBHOOK
+        value: http://localhost:3000/webhook/whatsapp
+        sync: true
+      - key: DB_URI
+        value: postgres://user:password@localhost/db
+        sync: true
+      - key: APP_BASIC_AUTH
+        value: user:password
+        sync: true
+      - key: WHATSAPP_PRESENCE_ON_CONNECT
+        value: "true"
+      - key: WHATSAPP_WEBHOOK_EVENTS
+        value: message
