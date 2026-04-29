@@ -29,6 +29,7 @@
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
     "better-auth": "^1.6.9",
+    "bullmq": "^5.76.4",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "express": "^5.2.1",
