@@ -16,6 +16,11 @@ export class WhatsAppAuthService {
 			expiresAt,
 		});
 
+		await db
+			.update(user)
+			.set({ whatsappNumber: phoneNumber })
+			.where(eq(user.id, userId));
+
 		await WhatsAppService.sendConfirmationCode(phoneNumber, code);
 		return { success: true };
 	}

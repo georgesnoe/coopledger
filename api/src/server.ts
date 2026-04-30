@@ -1,3 +1,4 @@
+import "dotenv/config";
 import crypto from "node:crypto";
 import { createServer } from "node:http";
 import { toNodeHandler } from "better-auth/node";
@@ -20,6 +21,21 @@ app.use(express.urlencoded({ extended: true }));
 
 app.all("/api/auth/{*any}", toNodeHandler(auth));
 
+app.post("/api/auth/whatsapp/send-code", async (req, res) => {
+	const { userId, phoneNumber } = req.body;
+	if (!userId || !phoneNumber) {
+		return res.status(400).json({ error: "userId and phoneNumber are required" });
+	}
+
+	try {
+		const result = await WhatsAppAuthService.generateAndSendCode(userId, phoneNumber);
+		res.json(result);
+	} catch (e: unknown) {
+		const error = e as Error;
+		res.status(500).json({ error: error.message });
+	}
+});
+
 app.post("/api/auth/whatsapp/verify", async (req, res) => {
 	const { userId, code } = req.body;
 	if (!userId || !code) {
@@ -33,8 +49,9 @@ app.post("/api/auth/whatsapp/verify", async (req, res) => {
 		} else {
 			res.status(400).json({ success: false, error: result.error });
 		}
-	} catch (e: any) {
-		res.status(500).json({ error: e.message });
+	} catch (e: unknown) {
+		const error = e as Error;
+		res.status(500).json({ error: error.message });
 	}
 });
 
