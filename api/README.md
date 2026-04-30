@@ -24,8 +24,10 @@ Express.js backend for the CoopLedger platform, enabling farmers to vote on coop
 | `REDIS_URL` | Redis connection URL | Yes |
 | `GOOGLE_CLIENT_ID` | Google OAuth client ID | No |
 | `GOOGLE_CLIENT_SECRET` | Google OAuth client secret | No |
-| `GOWA_URL` | GOWA API URL | No |
-| `GOWA_API_KEY` | GOWA API key | No |
+| `GOWA_URL` | GOWA API URL | Yes |
+| `GOWA_AUTH_USER` | GOWA basic auth username | Yes |
+| `GOWA_AUTH_PASSWORD` | GOWA basic auth password | Yes |
+| `GOWA_DEFAULT_DEVICE_ID` | Default WhatsApp device ID | No |
 | `GOWA_WEBHOOK_SECRET` | Secret for webhook HMAC | No |
 | `PORT` | Server port (default: 3000) | No |
 

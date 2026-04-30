@@ -33,6 +33,8 @@ coopledger/
 | `GOOGLE_CLIENT_SECRET` | Google OAuth client secret |
 | `REDIS_URL` | Redis connection for sessions/queue |
 | `GOWA_URL` | GOWA API URL for WhatsApp |
+| `GOWA_AUTH_USER` | GOWA basic auth username |
+| `GOWA_AUTH_PASSWORD` | GOWA basic auth password |
 
 ## Features
 

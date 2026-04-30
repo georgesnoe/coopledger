@@ -1,13 +1,21 @@
 import axios from "axios";
 
 export class WhatsAppService {
-	private static apiUrl = process.env.GOWA_API_URL || "http://localhost:3000";
-	private static apiKey = process.env.GOWA_API_KEY;
+	private static apiUrl = process.env.GOWA_URL || "http://localhost:3000";
+	private static getAuthHeader() {
+		const user = process.env.GOWA_AUTH_USER;
+		const password = process.env.GOWA_AUTH_PASSWORD;
+		if (!user || !password) {
+			throw new Error("GOWA_AUTH_USER and GOWA_AUTH_PASSWORD are required");
+		}
+		const credentials = Buffer.from(`${user}:${password}`).toString("base64");
+		return `Basic ${credentials}`;
+	}
 
 	static async sendMessage(to: string, message: string, deviceId?: string) {
 		try {
 			const response = await axios.post(
-				`${WhatsAppService.apiUrl}/send/message`,
+				`${this.apiUrl}/send/message`,
 				{
 					number: to,
 					message: message,
@@ -15,15 +23,16 @@ export class WhatsAppService {
 				{
 					headers: {
 						"X-Device-Id": deviceId || process.env.GOWA_DEFAULT_DEVICE_ID,
-						Authorization: `Bearer ${WhatsAppService.apiKey}`,
+						Authorization: this.getAuthHeader(),
 					},
 				},
 			);
 			return response.data;
-		} catch (error: any) {
+		} catch (error: unknown) {
+			const err = error as Error & { response?: unknown };
 			console.error(
 				"Error sending WhatsApp message:",
-				error.response?.data || error.message,
+				err.message,
 			);
 			throw error;
 		}
@@ -31,7 +40,7 @@ export class WhatsAppService {
 
 	static async sendConfirmationCode(phoneNumber: string, code: string) {
 		const message = `Your CoopLedger confirmation code is: ${code}. Please enter this code in the app to verify your account.`;
-		return WhatsAppService.sendMessage(phoneNumber, message);
+		return this.sendMessage(phoneNumber, message);
 	}
 
 	static async sendVoteNotification(
@@ -40,6 +49,6 @@ export class WhatsAppService {
 		result: string,
 	) {
 		const message = `The vote for "${voteQuestion}" has finished!\n\nResult: ${result}\n\nThank you for participating in CoopLedger!`;
-		return WhatsAppService.sendMessage(phoneNumber, message);
+		return this.sendMessage(phoneNumber, message);
 	}
 }
