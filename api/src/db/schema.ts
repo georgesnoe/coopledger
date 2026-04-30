@@ -1,11 +1,20 @@
 import { relations } from "drizzle-orm";
-import { boolean, index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import {
+	boolean,
+	index,
+	json,
+	pgTable,
+	text,
+	timestamp,
+} from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
 	id: text("id").primaryKey(),
 	name: text("name").notNull(),
 	email: text("email").notNull().unique(),
 	emailVerified: boolean("email_verified").default(false).notNull(),
+	whatsappNumber: text("whatsapp_number"),
+	isWhatsappVerified: boolean("is_whatsapp_verified").default(false).notNull(),
 	image: text("image"),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
@@ -57,21 +66,67 @@ export const account = pgTable(
 	(table) => [index("account_userId_idx").on(table.userId)],
 );
 
-export const verification = pgTable(
-	"verification",
-	{
-		id: text("id").primaryKey(),
-		identifier: text("identifier").notNull(),
-		value: text("value").notNull(),
-		expiresAt: timestamp("expires_at").notNull(),
-		createdAt: timestamp("created_at").defaultNow().notNull(),
-		updatedAt: timestamp("updated_at")
-			.defaultNow()
-			.$onUpdate(() => new Date())
-			.notNull(),
-	},
-	(table) => [index("verification_identifier_idx").on(table.identifier)],
-);
+export const whatsappVerification = pgTable("whatsapp_verification", {
+	id: text("id").primaryKey(),
+	userId: text("user_id")
+		.notNull()
+		.references(() => user.id, { onDelete: "cascade" }),
+	code: text("code").notNull(),
+	expiresAt: timestamp("expires_at").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at")
+		.defaultNow()
+		.$onUpdate(() => new Date())
+		.notNull(),
+});
+
+export const cooperative = pgTable("cooperative", {
+	id: text("id").primaryKey(),
+	name: text("name").notNull(),
+	description: text("description"),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at")
+		.defaultNow()
+		.$onUpdate(() => new Date())
+		.notNull(),
+});
+
+export const member = pgTable("member", {
+	id: text("id").primaryKey(),
+	userId: text("user_id")
+		.notNull()
+		.references(() => user.id, { onDelete: "cascade" }),
+	cooperativeId: text("cooperative_id").references(() => cooperative.id, {
+		onDelete: "cascade",
+	}),
+	role: text("role").default("member").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const vote = pgTable("vote", {
+	id: text("id").primaryKey(),
+	cooperativeId: text("cooperative_id")
+		.notNull()
+		.references(() => cooperative.id, { onDelete: "cascade" }),
+	question: text("question").notNull(),
+	options: json("options").$type<{ label: string }[]>().notNull(),
+	startTime: timestamp("start_time").notNull(),
+	endTime: timestamp("end_time").notNull(),
+	status: text("status").default("pending").notNull(), // pending, active, finished
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const memberVote = pgTable("member_vote", {
+	id: text("id").primaryKey(),
+	voteId: text("vote_id")
+		.notNull()
+		.references(() => vote.id, { onDelete: "cascade" }),
+	memberId: text("member_id")
+		.notNull()
+		.references(() => member.id, { onDelete: "cascade" }),
+	optionIndex: text("option_index").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
 
 export const userRelations = relations(user, ({ many }) => ({
 	sessions: many(session),

@@ -1,50 +1,52 @@
 {
-  "name": "api",
-  "version": "0.0.0",
-  "description": "CoopLedger API made with ExpressJS",
-  "keywords": [
-    "api",
-    "blockchain",
-    "coopledger",
-    "expressjs"
-  ],
-  "homepage": "https://github.com/georgesnoe/coopledger#readme",
-  "bugs": {
-    "url": "https://github.com/georgesnoe/coopledger/issues"
-  },
-  "license": "MIT",
-  "author": "Equipe TG-28",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/georgesnoe/coopledger.git"
-  },
-  "type": "module",
-  "main": "dist/server.js",
-  "scripts": {
-    "dev": "nodemon",
-    "build": "tsc -b",
-    "lint": "biome check --fix",
-    "format": "biome format --fix"
-  },
-  "dependencies": {
-    "@neondatabase/serverless": "^1.1.0",
-    "better-auth": "^1.6.9",
-    "bullmq": "^5.76.4",
-    "dotenv": "^17.4.2",
-    "drizzle-orm": "^0.45.2",
-    "express": "^5.2.1",
-    "ioredis": "^5.10.1",
-    "socket.io": "^4.8.3"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.4.13",
-    "@types/express": "^5.0.6",
-    "@types/ioredis": "^4.28.10",
-    "@types/node": "^25.6.0",
-    "@types/socket.io": "^3.0.1",
-    "drizzle-kit": "^0.31.10",
-    "nodemon": "^3.1.14",
-    "ts-node": "^10.9.2",
-    "typescript": "^6.0.3"
-  }
+	"name": "api",
+	"version": "0.0.0",
+	"description": "CoopLedger API made with ExpressJS",
+	"keywords": [
+		"api",
+		"blockchain",
+		"coopledger",
+		"expressjs"
+	],
+	"homepage": "https://github.com/georgesnoe/coopledger#readme",
+	"bugs": {
+		"url": "https://github.com/georgesnoe/coopledger/issues"
+	},
+	"license": "MIT",
+	"author": "Equipe TG-28",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/georgesnoe/coopledger.git"
+	},
+	"type": "module",
+	"main": "dist/server.js",
+	"scripts": {
+		"dev": "nodemon",
+		"build": "tsc -b",
+		"lint": "biome check --fix",
+		"format": "biome format --fix"
+	},
+	"dependencies": {
+		"@neondatabase/serverless": "^1.1.0",
+		"axios": "^1.9.0",
+		"better-auth": "^1.6.9",
+		"bullmq": "^5.76.4",
+		"dotenv": "^17.4.2",
+		"drizzle-orm": "^0.45.2",
+		"express": "^5.2.1",
+		"ioredis": "^5.10.1",
+		"nanoid": "^5.1.0",
+		"socket.io": "^4.8.3"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.4.13",
+		"@types/express": "^5.0.6",
+		"@types/ioredis": "^4.28.10",
+		"@types/node": "^25.6.0",
+		"@types/socket.io": "^3.0.1",
+		"drizzle-kit": "^0.31.10",
+		"nodemon": "^3.1.14",
+		"ts-node": "^10.9.2",
+		"typescript": "^6.0.3"
+	}
 }
