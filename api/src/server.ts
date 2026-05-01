@@ -3,6 +3,7 @@ import crypto from "node:crypto";
 import { createServer } from "node:http";
 import { toNodeHandler } from "better-auth/node";
 import express from "express";
+import cors from "cors";
 import { Redis } from "ioredis";
 import { Server } from "socket.io";
 import { auth } from "@/lib/auth";
@@ -10,6 +11,7 @@ import { WhatsAppAuthService } from "@/lib/whatsapp-auth";
 import "@/lib/vote-worker";
 
 const app = express();
+app.use(cors());
 const server = createServer(app);
 const io = new Server(server);
 const redis = new Redis(process.env.REDIS_URL as string, {
