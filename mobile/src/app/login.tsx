@@ -22,7 +22,7 @@ export default function LoginScreen() {
 
     setLoading(true);
     try {
-      const { data, error } = await authClient.signIn({
+      const { data, error } = await authClient.signIn.email({
         email,
         password,
       });

@@ -23,7 +23,7 @@ export default function SignupScreen() {
 
     setLoading(true);
     try {
-      const { data, error } = await authClient.signUp({
+      const { data, error } = await authClient.signUp.email({
         email,
         password,
         name: email.split('@')[0],
