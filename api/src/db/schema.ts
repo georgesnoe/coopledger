@@ -128,6 +128,32 @@ export const memberVote = pgTable("member_vote", {
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const wallet = pgTable("wallet", {
+	id: text("id").primaryKey(),
+	userId: text("user_id")
+		.notNull()
+		.unique()
+		.references(() => user.id, { onDelete: "cascade" }),
+	balance: text("balance").default("0").notNull(), // Use text or numeric for precision
+	currency: text("currency").default("FCFA").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at")
+		.defaultNow()
+		.$onUpdate(() => new Date())
+		.notNull(),
+});
+
+export const transaction = pgTable("transaction", {
+	id: text("id").primaryKey(),
+	walletId: text("wallet_id")
+		.notNull()
+		.references(() => wallet.id, { onDelete: "cascade" }),
+	amount: text("amount").notNull(),
+	type: text("type").notNull(), // deposit, withdrawal, payment, vote_reward
+	description: text("description"),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const userRelations = relations(user, ({ many }) => ({
 	sessions: many(session),
 	accounts: many(account),
@@ -144,5 +170,19 @@ export const accountRelations = relations(account, ({ one }) => ({
 	user: one(user, {
 		fields: [account.userId],
 		references: [user.id],
+	}),
+}));
+
+export const walletRelations = relations(wallet, ({ one }) => ({
+	user: one(user, {
+		fields: [wallet.userId],
+		references: [user.id],
+	}),
+}));
+
+export const transactionRelations = relations(transaction, ({ one }) => ({
+	wallet: one(wallet, {
+		fields: [transaction.walletId],
+		references: [wallet.id],
 	}),
 }));

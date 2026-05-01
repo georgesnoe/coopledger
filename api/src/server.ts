@@ -9,6 +9,9 @@ import { Server } from "socket.io";
 import { auth } from "@/lib/auth";
 import { WhatsAppAuthService } from "@/lib/whatsapp-auth";
 import "@/lib/vote-worker";
+import { db } from "@/db/config";
+import { user, wallet, transaction, member, cooperative } from "@/db/schema";
+import { eq, desc } from "drizzle-orm";
 
 const app = express();
 app.use(cors());
@@ -90,6 +93,43 @@ app.post("/webhook/whatsapp", async (req, res) => {
 	// Future processing logic based on event type
 
 	res.status(200).send("OK");
+});
+
+app.get("/api/user/dashboard", async (req, res) => {
+	try {
+		const session = await auth.api.getSession({ headers: req.headers });
+		if (!session) {
+			return res.status(401).json({ error: "Unauthorized" });
+		}
+
+		const userId = session.user.id;
+
+		const [walletData, cooperativesData, transactionsData] = await Promise.all([
+			db.query.wallet.findFirst({
+				where: eq(wallet.userId, userId),
+			}),
+			db.query.member.findMany({
+				where: eq(member.userId, userId),
+				with: {
+					cooperative: true,
+				},
+			}),
+			db.query.transaction.findMany({
+				limit: 10,
+				orderBy: [desc(transaction.createdAt)],
+			}),
+		]);
+
+		res.json({
+			balance: walletData?.balance || "0",
+			currency: walletData?.currency || "FCFA",
+			cooperatives: cooperativesData.map(m => m.cooperative),
+			transactions: transactionsData,
+		});
+	} catch (e: unknown) {
+		const error = e as Error;
+		res.status(500).json({ error: error.message });
+	}
 });
 
 app.get("/", (_, res) => {

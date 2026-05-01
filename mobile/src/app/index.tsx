@@ -11,6 +11,8 @@ export default function Index() {
       const session = await authClient.getSession();
       if (!session.data) {
         router.replace('/login');
+      } else {
+        router.replace('/(tabs)');
       }
     };
     checkAuth();
