@@ -1,109 +1,82 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Alert, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { authClient } from '@/lib/auth-client';
+import { Ionicons } from '@expo/vector-icons';
 
 WebBrowser.maybeCompleteAuthSession();
 
 export default function LoginScreen() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
-    if (!email || !password) {
+    if (!phone || !password) {
       Alert.alert('Erreur', 'Veuillez remplir tous les champs');
       return;
     }
 
     setLoading(true);
     try {
-      const { data, error } = await authClient.signIn.email({
-        email,
+      const result = await authClient.signIn({
+        email: `${phone}@coopledger.tg`,
         password,
       });
 
-      if (error) {
-        Alert.alert('Échec de la connexion', error.message);
-      } else if (data?.user) {
+      if (result.user) {
         router.replace('/');
       }
     } catch (e: any) {
-      Alert.alert('Erreur', e.message);
+      Alert.alert('Échec de la connexion', e.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleLogin = async () => {
-    try {
-      // Better-auth typically handles the redirect.
-      // In a mobile app, we use the social sign-in flow.
-      const { data, error } = await authClient.signIn.social({
-        provider: 'google',
-        callbackURL: 'coopledger://auth/callback',
-      });
-
-      if (error) {
-        Alert.alert('Erreur Google', error.message);
-        return;
-      }
-
-      if (data?.url) {
-        const result = await WebBrowser.openAuthSessionAsync(data.url, 'coopledger://auth/callback');
-        if (result.type === 'success') {
-          await authClient.getSession();
-          router.replace('/');
-        }
-      }
-    } catch (e: any) {
-      Alert.alert('Erreur', e.message);
-    }
-  };
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Bon retour</Text>
-        <Text style={styles.subtitle}>Connectez-vous pour continuer sur CoopLedger</Text>
+      <View style={styles.headerIllustration}>
+        <Image
+          source={{ uri: 'https://www.figma.com/api/mcp/asset/ee257560-e9bb-4bfd-b55f-5bb58f2cc7f4' }}
+          style={styles.illustration}
+        />
       </View>
 
-      <View style={styles.card}>
-        <Input
-          label="E-mail"
-          value={email}
-          onChangeText={setEmail}
-          placeholder="agriculteur@exemple.com"
-          keyboardType="email-address"
-        />
-        <Input
-          label="Mot de passe"
-          value={password}
-          onChangeText={setPassword}
-          placeholder="********"
-          secureTextEntry
-        />
-
-        <Button title="Se connecter" onPress={handleLogin} loading={loading} />
-
-        <View style={styles.divider}>
-          <View style={styles.line} />
-          <Text style={styles.dividerText}>ou</Text>
-          <View style={styles.line} />
+      <View style={styles.mainContent}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Bon retour !</Text>
         </View>
 
-        <Button
-          title="Continuer avec Google"
-          onPress={handleGoogleLogin}
-          variant="secondary"
-        />
+        <View style={styles.form}>
+          <Input
+            label="Numéro de téléphone"
+            value={phone}
+            onChangeText={setPhone}
+            placeholder="Entrez votre numéro"
+            prefix="+228"
+            icon={<Ionicons name="call-outline" size={20} color="#666" />}
+          />
+          <Input
+            label="Mot de passe"
+            value={password}
+            onChangeText={setPassword}
+            placeholder="Entrez votre mot de passe"
+            secureTextEntry
+            icon={<Ionicons name="lock-closed-outline" size={20} color="#666" />}
+          />
+
+          <Text style={styles.forgotPassword} onPress={() => {}}>Mot de passe oublié ?</Text>
+
+          <Button title="Connexion" onPress={handleLogin} loading={loading} variant="primary" />
+        </View>
 
         <View style={styles.footer}>
-          <Text style={styles.footerText}>Vous n'avez pas de compte ? </Text>
+          <Text style={styles.footerText}>Pas encore de compte ? </Text>
           <Text style={styles.link} onPress={() => router.push('/signup')}>S'inscrire</Text>
         </View>
       </View>
@@ -114,36 +87,45 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 24,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
+    backgroundColor: '#F9F9F9',
+  },
+  headerIllustration: {
+    height: 240,
+    width: '100%',
+    borderBottomLeftRadius: 48,
+    borderBottomRightRadius: 48,
+    overflow: 'hidden',
+  },
+  illustration: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  mainContent: {
+    padding: 20,
+    paddingBottom: 40,
   },
   header: {
-    marginBottom: 32,
     alignItems: 'center',
+    marginBottom: 32,
+    marginTop: 20,
   },
   title: {
     fontSize: 32,
-    color: '#333',
-    marginBottom: 8,
+    color: '#1a1c1c',
     fontFamily: 'GoogleSansText-Bold',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
     textAlign: 'center',
-    fontFamily: 'GoogleSansText-Regular',
   },
-  card: {
-    backgroundColor: '#f2e3bc',
-    padding: 24,
-    borderRadius: 24,
+  form: {
     width: '100%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 5,
+  },
+  forgotPassword: {
+    textAlign: 'right',
+    fontSize: 12,
+    color: '#006494',
+    fontFamily: 'GoogleSansText-Medium',
+    marginBottom: 24,
+    marginTop: -8,
   },
   divider: {
     flexDirection: 'row',
@@ -153,27 +135,34 @@ const styles = StyleSheet.create({
   line: {
     flex: 1,
     height: 1,
-    backgroundColor: '#ddd',
+    backgroundColor: '#ccc',
   },
   dividerText: {
     marginHorizontal: 12,
-    color: '#999',
-    fontSize: 14,
+    color: '#3e4943',
+    fontSize: 12,
     fontFamily: 'GoogleSansText-Regular',
+    textTransform: 'uppercase',
+  },
+  googleButton: {
+    backgroundColor: '#fff',
+    borderColor: '#ccc',
+    borderWidth: 1,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 24,
+    marginTop: 32,
   },
   footerText: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 16,
+    color: '#3e4943',
     fontFamily: 'GoogleSansText-Regular',
   },
   link: {
-    fontSize: 14,
-    color: '#2d936c',
+    fontSize: 16,
+    color: '#006494',
+    fontWeight: '600',
     fontFamily: 'GoogleSansText-Medium',
   },
 });

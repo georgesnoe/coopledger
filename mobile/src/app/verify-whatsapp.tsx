@@ -79,11 +79,18 @@ export default function VerifyWhatsAppScreen() {
           icon={<Ionicons name="key-outline" size={20} color="#666" />}
         />
 
-        <Button 
-          title="Vérifier et continuer" 
-          onPress={handleVerify} 
-          loading={loading} 
-          variant="primary" 
+        <Button
+          title="Vérifier et continuer"
+          onPress={handleVerify}
+          loading={loading}
+          variant="primary"
+        />
+
+        <Button
+          title="Passer l'authentification"
+          onPress={() => router.replace('/(tabs)')}
+          variant="secondary"
+          style={{ marginTop: 12 }}
         />
 
         <View style={styles.divider}>

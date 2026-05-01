@@ -9,21 +9,27 @@ interface InputProps {
   secureTextEntry?: boolean;
   keyboardType?: any;
   error?: string;
+  icon?: React.ReactNode;
+  prefix?: string;
 }
 
-export const Input = ({ label, value, onChangeText, placeholder, secureTextEntry, keyboardType, error }: InputProps) => {
+export const Input = ({ label, value, onChangeText, placeholder, secureTextEntry, keyboardType, error, icon, prefix }: InputProps) => {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
-      <TextInput
-        style={[styles.input, error ? styles.inputError : null]}
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        secureTextEntry={secureTextEntry}
-        keyboardType={keyboardType}
-        placeholderTextColor="#999"
-      />
+      <View style={[styles.inputWrapper, error ? styles.inputWrapperError : null]}>
+        {icon && <View style={styles.iconContainer}>{icon}</View>}
+        {prefix && <View style={styles.prefixContainer}><Text style={styles.prefixText}>{prefix}</Text></View>}
+        <TextInput
+          style={styles.input}
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          secureTextEntry={secureTextEntry}
+          keyboardType={keyboardType}
+          placeholderTextColor="#bdc9c1"
+        />
+      </View>
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
@@ -34,24 +40,50 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   label: {
-    fontSize: 14,
-    color: '#333',
+    fontSize: 12,
+    color: '#3e4943',
     marginBottom: 8,
     fontWeight: '500',
     fontFamily: 'GoogleSansText-Medium',
+    tracking: 0.24,
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 6,
+    height: 48,
+    overflow: 'hidden',
+  },
+  inputWrapperError: {
+    borderColor: '#ff3b30',
+  },
+  iconContainer: {
+    paddingLeft: 12,
+    paddingRight: 8,
+    justifyContent: 'center',
+  },
+  prefixContainer: {
+    paddingLeft: 12,
+    paddingRight: 8,
+    borderRightWidth: 1,
+    borderRightColor: '#ccc',
+    height: '100%',
+    justifyContent: 'center',
+  },
+  prefixText: {
+    fontSize: 16,
+    color: '#3e4943',
+    fontFamily: 'GoogleSansText-Regular',
   },
   input: {
-    backgroundColor: '#f9f9f9',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 12,
-    padding: 12,
+    flex: 1,
+    paddingHorizontal: 12,
     fontSize: 16,
     color: '#000',
     fontFamily: 'GoogleSansText-Regular',
-  },
-  inputError: {
-    borderColor: '#ff3b30',
   },
   errorText: {
     color: '#ff3b30',

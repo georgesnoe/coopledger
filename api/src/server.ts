@@ -1,16 +1,15 @@
 import "dotenv/config";
 import crypto from "node:crypto";
 import { createServer } from "node:http";
-import { toNodeHandler } from "better-auth/node";
 import express from "express";
 import cors from "cors";
 import { Redis } from "ioredis";
 import { Server } from "socket.io";
-import { auth } from "@/lib/auth";
 import { WhatsAppAuthService } from "@/lib/whatsapp-auth";
+import { AuthService } from "@/lib/auth-service";
 import "@/lib/vote-worker";
 import { db } from "@/db/config";
-import { user, wallet, transaction, member, cooperative } from "@/db/schema";
+import { user, wallet, transaction, member, cooperative, session } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 
 const app = express();
@@ -24,7 +23,84 @@ const redis = new Redis(process.env.REDIS_URL as string, {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.all("/api/auth/{*any}", toNodeHandler(auth));
+// Auth Middleware
+const authenticate = async (req: any, res: any, next: any) => {
+	const token = req.headers.authorization?.split(' ')[1];
+	if (!token) return res.status(401).json({ error: "Unauthorized" });
+
+	const userId = await AuthService.validateSession(token);
+	if (!userId) return res.status(401).json({ error: "Invalid or expired session" });
+
+	req.userId = userId;
+	next();
+};
+
+app.post("/api/auth/signup", async (req, res) => {
+	const { name, email, phoneNumber, password } = req.body;
+	if (!name || !email || !phoneNumber || !password) {
+		return res.status(400).json({ error: "All fields are required" });
+	}
+
+	try {
+		const existingUser = await db.query.user.findFirst({
+			where: (user, { or }) => or(eq(user.email, email), eq(user.phoneNumber, phoneNumber)),
+		});
+
+		if (existingUser) {
+			return res.status(400).json({ error: "Email or phone number already registered" });
+		}
+
+		const hashedPassword = await AuthService.hashPassword(password);
+		const newUser = await db.insert(user).values({
+			id: crypto.randomUUID(),
+			name,
+			email,
+			phoneNumber,
+			password: hashedPassword,
+		}).returning();
+
+		const { token } = await AuthService.createSession(newUser[0].id);
+		res.json({ user: newUser[0], token });
+	} catch (e: unknown) {
+		const error = e as Error;
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.post("/api/auth/login", async (req, res) => {
+	const { email, password } = req.body;
+	if (!email || !password) {
+		return res.status(400).json({ error: "Email and password are required" });
+	}
+
+	try {
+		const userData = await db.query.user.findFirst({
+			where: eq(user.email, email),
+		});
+
+		if (!userData || !(await AuthService.comparePassword(password, userData.password))) {
+			return res.status(401).json({ error: "Invalid credentials" });
+		}
+
+		const { token } = await AuthService.createSession(userData.id);
+		res.json({ user: userData, token });
+	} catch (e: unknown) {
+		const error = e as Error;
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.get("/api/auth/me", authenticate, async (req: any, res) => {
+	try {
+		const userData = await db.query.user.findFirst({
+			where: eq(user.id, req.userId),
+		});
+		res.json(userData);
+	} catch (e: unknown) {
+		const error = e as Error;
+		res.status(500).json({ error: error.message });
+	}
+});
 
 app.post("/api/auth/whatsapp/send-code", async (req, res) => {
 	const { userId, phoneNumber } = req.body;
@@ -95,14 +171,9 @@ app.post("/webhook/whatsapp", async (req, res) => {
 	res.status(200).send("OK");
 });
 
-app.get("/api/user/dashboard", async (req, res) => {
+app.get("/api/user/dashboard", authenticate, async (req: any, res) => {
 	try {
-		const session = await auth.api.getSession({ headers: req.headers });
-		if (!session) {
-			return res.status(401).json({ error: "Unauthorized" });
-		}
-
-		const userId = session.user.id;
+		const userId = req.userId;
 
 		const [walletData, cooperativesData, transactionsData] = await Promise.all([
 			db.query.wallet.findFirst({

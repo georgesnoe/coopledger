@@ -18,56 +18,34 @@ export default function SignupScreen() {
   const [loading, setLoading] = useState(false);
 
   const handleSignup = async () => {
-    if (!fullName || !phone || !password || !cooperative) {
+    if (!fullName || !phone || !password) {
       Alert.alert('Erreur', 'Veuillez remplir tous les champs');
       return;
     }
 
     setLoading(true);
     try {
-      const { data, error } = await authClient.signUp.email({
-        email: `${phone}@coopledger.tg`, // Use phone as unique identifier for better-auth email provider
-        password,
+      const result = await authClient.signUp({
         name: fullName,
+        email: `${phone}@coopledger.tg`,
+        phoneNumber: phone,
+        password,
       });
 
-      if (error) {
-        Alert.alert('Échec de l\'inscription', error.message);
-      } else if (data?.user) {
-        router.push({
-          pathname: '/verify-whatsapp',
-          params: { userId: data.user.id, phoneNumber: phone },
-        });
-      }
+      router.push({
+        pathname: '/verify-whatsapp',
+        params: { userId: result.user.id, phoneNumber: phone },
+      });
     } catch (e: any) {
-      Alert.alert('Erreur', e.message);
+      Alert.alert('Échec de l\'inscription', e.message);
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleSignup = async () => {
-    try {
-      const { data, error } = await authClient.signIn.social({
-        provider: 'google',
-        callbackURL: 'coopledger://auth/callback',
-      });
-
-      if (error) {
-        Alert.alert('Erreur Google', error.message);
-        return;
-      }
-
-      if (data?.url) {
-        const result = await WebBrowser.openAuthSessionAsync(data.url, 'coopledger://auth/callback');
-        if (result.type === 'success') {
-          await authClient.getSession();
-          router.replace('/');
-        }
-      }
-    } catch (e: any) {
-      Alert.alert('Erreur', e.message);
-    }
+    // Google auth removed as per requirements
+    Alert.alert('Info', 'L\'authentification Google est temporairement désactivée');
   };
 
   return (
@@ -98,14 +76,6 @@ export default function SignupScreen() {
           icon={<Ionicons name="call-outline" size={20} color="#666" />}
           keyboardType="phone-pad"
         />
-        <Input
-          label="Coopérative"
-          value={cooperative}
-          onChangeText={setCooperative}
-          placeholder="Sélectionnez votre coopérative"
-          icon={<Ionicons name="people-outline" size={20} color="#666" />}
-        />
-        {/* Password field added for better-auth requirements although not in specific figma node provided but necessary for signUp.email */}
         <Input
           label="Mot de passe"
           value={password}
