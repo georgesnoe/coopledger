@@ -171,11 +171,78 @@ app.post("/webhook/whatsapp", async (req, res) => {
 	res.status(200).send("OK");
 });
 
+app.get("/api/cooperatives", authenticate, async (req: any, res) => {
+	try {
+		const cooperatives = await db.query.cooperative.findMany();
+		res.json(cooperatives);
+	} catch (e: unknown) {
+		const error = e as Error;
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.post("/api/cooperatives", authenticate, async (req: any, res) => {
+	const { name, description } = req.body;
+	if (!name) {
+		return res.status(400).json({ error: "Cooperative name is required" });
+	}
+
+	try {
+		const newCoop = await db.insert(cooperative).values({
+			id: crypto.randomUUID(),
+			name,
+			description,
+			founderId: req.userId,
+		}).returning();
+
+		await db.insert(member).values({
+			id: crypto.randomUUID(),
+			userId: req.userId,
+			cooperativeId: newCoop[0].id,
+			role: "admin",
+		});
+
+		res.status(201).json(newCoop[0]);
+	} catch (e: unknown) {
+		const error = e as Error;
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.post("/api/cooperatives/join", authenticate, async (req: any, res) => {
+	const { cooperativeId } = req.body;
+	if (!cooperativeId) {
+		return res.status(400).json({ error: "cooperativeId is required" });
+	}
+
+	try {
+		const existingMember = await db.query.member.findFirst({
+			where: (member, { and }) => and(eq(member.userId, req.userId), eq(member.cooperativeId, cooperativeId)),
+		});
+
+		if (existingMember) {
+			return res.status(400).json({ error: "You are already a member of this cooperative" });
+		}
+
+		await db.insert(member).values({
+			id: crypto.randomUUID(),
+			userId: req.userId,
+			cooperativeId,
+			role: "member",
+		});
+
+		res.json({ success: true, message: "Joined cooperative successfully" });
+	} catch (e: unknown) {
+		const error = e as Error;
+		res.status(500).json({ error: error.message });
+	}
+});
+
 app.get("/api/user/dashboard", authenticate, async (req: any, res) => {
 	try {
 		const userId = req.userId;
 
-		const [walletData, cooperativesData, transactionsData] = await Promise.all([
+		const [walletData, memberships] = await Promise.all([
 			db.query.wallet.findFirst({
 				where: eq(wallet.userId, userId),
 			}),
@@ -185,16 +252,23 @@ app.get("/api/user/dashboard", authenticate, async (req: any, res) => {
 					cooperative: true,
 				},
 			}),
-			db.query.transaction.findMany({
-				limit: 10,
-				orderBy: [desc(transaction.createdAt)],
-			}),
 		]);
+
+		if (memberships.length === 0) {
+			return res.status(403).json({ error: "You must belong to at least one cooperative to access the dashboard" });
+		}
+
+		const cooperatives = memberships.map(m => m.cooperative);
+		const transactionsData = await db.query.transaction.findMany({
+			limit: 10,
+			orderBy: [desc(transaction.createdAt)],
+			// In a real app, we would filter transactions by the user's wallet
+		});
 
 		res.json({
 			balance: walletData?.balance || "0",
 			currency: walletData?.currency || "FCFA",
-			cooperatives: cooperativesData.map(m => m.cooperative),
+			cooperatives,
 			transactions: transactionsData,
 		});
 	} catch (e: unknown) {

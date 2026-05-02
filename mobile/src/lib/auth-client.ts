@@ -33,6 +33,10 @@ export const authClient = {
     return result;
   },
 
+  async getToken() {
+    return await SecureStore.getItemAsync('auth_token');
+  },
+
   async getSession() {
     const token = await SecureStore.getItemAsync('auth_token');
     if (!token) return { data: null };

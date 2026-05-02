@@ -19,7 +19,7 @@ export default function VerifyWhatsAppScreen() {
 
   const sendCode = async () => {
     try {
-      const response = await fetch(`${process.env.API_BASE_URL}/api/auth/whatsapp/send-code`, {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/api/auth/whatsapp/send-code`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, phoneNumber }),
@@ -39,7 +39,7 @@ export default function VerifyWhatsAppScreen() {
 
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.API_BASE_URL}/api/auth/whatsapp/verify`, {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/api/auth/whatsapp/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, code }),
@@ -48,7 +48,7 @@ export default function VerifyWhatsAppScreen() {
       if (!response.ok) throw new Error(data.error || 'Verification failed');
 
       Alert.alert('Succès', 'Votre compte a été vérifié avec succès !');
-      router.replace('/(tabs)');
+      router.replace('/choose-cooperative');
     } catch (e: any) {
       Alert.alert('Erreur', e.message);
     } finally {
@@ -84,13 +84,6 @@ export default function VerifyWhatsAppScreen() {
           onPress={handleVerify}
           loading={loading}
           variant="primary"
-        />
-
-        <Button
-          title="Passer l'authentification"
-          onPress={() => router.replace('/(tabs)')}
-          variant="secondary"
-          style={{ marginTop: 12 }}
         />
 
         <View style={styles.divider}>
