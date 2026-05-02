@@ -35,7 +35,7 @@ export default function ChooseCooperativePage() {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!// name) return;
+    if (!name) return;
 
     setLoading(true);
     try {
@@ -88,7 +88,7 @@ export default function ChooseCooperativePage() {
         throw new Error('Le serveur a renvoyé une réponse invalide.');
       }
     } catch (e: any) {
-      alert(e.// message);
+      alert(e.message);
     } finally {
       setLoading(false);
     }
