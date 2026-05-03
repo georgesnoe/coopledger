@@ -1,15 +1,53 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { Button } from '@/components/ui/Button';
 import { Ionicons } from '@expo/vector-icons';
+import { authClient } from '@/lib/auth-client';
 
 export default function HomeScreen() {
+  const [userData, setUserData] = useState<any>(null);
+  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const session = await authClient.getSession();
+        const token = await authClient.getToken();
+
+        if (session.data) {
+          setUserData(session.data);
+
+          const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/api/user/dashboard`, {
+            headers: { 'Authorization': `Bearer ${token}` },
+          });
+          const data = await response.json();
+          setDashboardData(data);
+        }
+      } catch (e) {
+        console.error('Error loading dashboard data:', e);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#2d936c" />
+      </View>
+    );
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <View>
           <Text style={styles.greeting}>Bonjour,</Text>
-          <Text style={styles.userName}>Kossi Georges-Noé</Text>
+          <Text style={styles.userName}>{userData?.name || 'Utilisateur'}</Text>
         </View>
         <TouchableOpacity style={styles.notificationButton}>
           <Ionicons name="notifications-outline" size={24} color="#1a1c1c" />
@@ -19,7 +57,9 @@ export default function HomeScreen() {
 
       <View style={styles.walletCard}>
         <Text style={styles.walletLabel}>MON PORTEFEUILLE</Text>
-        <Text style={styles.walletValue}>1 250 000 FCFA</Text>
+        <Text style={styles.walletValue}>
+          {dashboardData?.balance || '0'} {dashboardData?.currency || 'FCFA'}
+        </Text>
         <View style={styles.walletActions}>
           <Button title="Envoyer" variant="primary" style={styles.actionButton} onPress={() => {}} />
           <Button title="Recevoir" variant="secondary" style={styles.actionButton} onPress={() => {}} />
@@ -29,26 +69,18 @@ export default function HomeScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Mes Coopératives</Text>
         <View style={styles.coopList}>
-          <View style={styles.coopItem}>
-            <View style={styles.coopIcon}>
-              <Ionicons name="leaf" size={24} color="#2d936c" />
+          {dashboardData?.cooperatives?.map((coop: any, index: number) => (
+            <View key={coop.id || index} style={styles.coopItem}>
+              <View style={styles.coopIcon}>
+                <Ionicons name="leaf" size={24} color="#2d936c" />
+              </View>
+              <View style={styles.coopInfo}>
+                <Text style={styles.coopName}>{coop.name}</Text>
+                <Text style={styles.coopStatus}>Active</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color="#ccc" />
             </View>
-            <View style={styles.coopInfo}>
-              <Text style={styles.coopName}>Coop-Cacao Nord</Text>
-              <Text style={styles.coopStatus}>Active • 12 membres</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#ccc" />
-          </View>
-          <View style={styles.coopItem}>
-            <View style={styles.coopIcon}>
-              <Ionicons name="leaf" size={24} color="#2d936c" />
-            </View>
-            <View style={styles.coopInfo}>
-              <Text style={styles.coopName}>Union Café Togo</Text>
-              <Text style={styles.coopStatus}>Active • 45 membres</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#ccc" />
-          </View>
+          )) || <Text style={styles.emptyText}>Aucune coopérative rejointe.</Text>}
         </View>
       </View>
 
@@ -59,40 +91,30 @@ export default function HomeScreen() {
             <Text style={styles.seeAllText}>Voir tout</Text>
           </TouchableOpacity>
         </View>
-        
-        <View style={styles.activityList}>
-          <View style={styles.activityItem}>
-            <View style={[styles.activityIcon, { backgroundColor: '#d1fae5' }]}>
-              <Ionicons name="arrow-down" size={20} color="#2d936c" />
-            </View>
-            <View style={styles.activityInfo}>
-              <Text style={styles.activityTitle}>Dépôt de récolte</Text>
-              <Text style={styles.activityDate}>Hier, 14:30</Text>
-            </View>
-            <Text style={styles.activityAmountPositive}>+ 45 000 FCFA</Text>
-          </View>
-          
-          <View style={styles.activityItem}>
-            <View style={[styles.activityIcon, { backgroundColor: '#fee2e2' }]}>
-              <Ionicons name="arrow-up" size={20} color="#ef4444" />
-            </View>
-            <View style={styles.activityInfo}>
-              <Text style={styles.activityTitle}>Achat d'engrais</Text>
-              <Text style={styles.activityDate}>28 Avril, 09:15</Text>
-            </View>
-            <Text style={styles.activityAmountNegative}>- 12 000 FCFA</Text>
-          </View>
 
-          <View style={styles.activityItem}>
-            <View style={[styles.activityIcon, { backgroundColor: '#dbeafe' }]}>
-              <Ionicons name="cube" size={20} color="#3b82f6" />
+        <View style={styles.activityList}>
+          {dashboardData?.transactions?.map((tx: any, index: number) => (
+            <View key={tx.id || index} style={styles.activityItem}>
+              <View style={[styles.activityIcon, {
+                backgroundColor: tx.type === 'deposit' ? '#d1fae5' : tx.type === 'withdrawal' ? '#fee2e2' : '#dbeafe'
+              }]}>
+                <Ionicons
+                  name={tx.type === 'deposit' ? "arrow-down" : tx.type === 'withdrawal' ? "arrow-up" : "cube"}
+                  size={20}
+                  color={tx.type === 'deposit' ? "#2d936c" : tx.type === 'withdrawal' ? "#ef4444" : "#3b82f6"}
+                />
+              </View>
+              <View style={styles.activityInfo}>
+                <Text style={styles.activityTitle}>{tx.description || tx.type}</Text>
+                <Text style={styles.activityDate}>
+                  {new Date(tx.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                </Text>
+              </View>
+              <Text style={tx.type === 'deposit' ? styles.activityAmountPositive : styles.activityAmountNegative}>
+                {tx.type === 'deposit' ? '+' : '-'} {tx.amount} FCFA
+              </Text>
             </View>
-            <View style={styles.activityInfo}>
-              <Text style={styles.activityTitle}>Vote Gouvernance</Text>
-              <Text style={styles.activityDate}>25 Avril, 18:00</Text>
-            </View>
-            <Text style={styles.activityStatus}>Participé</Text>
-          </View>
+          )) || <Text style={styles.emptyText}>Aucune transaction récente.</Text>}
         </View>
       </View>
     </ScrollView>
@@ -103,6 +125,12 @@ const styles = StyleSheet.create({
   container: {
     padding: 24,
     paddingTop: 60,
+    backgroundColor: '#F9F9F9',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#F9F9F9',
   },
   header: {
@@ -269,9 +297,10 @@ const styles = StyleSheet.create({
     color: '#ef4444',
     fontFamily: 'GoogleSansText-Bold',
   },
-  activityStatus: {
-    fontSize: 13,
+  emptyText: {
+    textAlign: 'center',
     color: '#666',
     fontFamily: 'GoogleSansText-Regular',
+    marginVertical: 20,
   },
 });

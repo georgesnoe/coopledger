@@ -1,25 +1,26 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert, Image } from 'react-native';
-import { useRouter } from 'expo-router';
-import * as WebBrowser from 'expo-web-browser';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { authClient } from '@/lib/auth-client';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from "react";
+import { View, Text, StyleSheet, ScrollView, Alert, Image } from "react-native";
+import { useRouter } from "expo-router";
+import * as WebBrowser from "expo-web-browser";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { authClient } from "@/lib/auth-client";
+import { Ionicons } from "@expo/vector-icons";
+import * as SecureStore from "expo-secure-store";
 
 WebBrowser.maybeCompleteAuthSession();
 
 export default function SignupScreen() {
   const router = useRouter();
-  const [fullName, setFullName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-  const [cooperative, setCooperative] = useState('');
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [cooperative, setCooperative] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSignup = async () => {
     if (!fullName || !phone || !password) {
-      Alert.alert('Erreur', 'Veuillez remplir tous les champs');
+      Alert.alert("Erreur", "Veuillez remplir tous les champs");
       return;
     }
 
@@ -32,12 +33,14 @@ export default function SignupScreen() {
         password,
       });
 
+      SecureStore.setItem("user_id", result.user.id);
+      SecureStore.setItem("phone_number", phone);
+
       router.push({
-        pathname: '/verify-whatsapp',
-        params: { userId: result.user.id, phoneNumber: phone },
+        pathname: "/choose-cooperative",
       });
     } catch (e: any) {
-      Alert.alert('Échec de l\'inscription', e.message);
+      Alert.alert("Échec de l'inscription", e.message);
     } finally {
       setLoading(false);
     }
@@ -45,14 +48,16 @@ export default function SignupScreen() {
 
   const handleGoogleSignup = async () => {
     // Google auth removed as per requirements
-    Alert.alert('Info', 'L\'authentification Google est temporairement désactivée');
+    Alert.alert("Info", "L'authentification Google est temporairement désactivée");
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <Image
-          source={{ uri: 'https://www.figma.com/api/mcp/asset/dafc4e55-49e7-4e36-bf9e-f6bc9f7cbbb3' }}
+          source={{
+            uri: "https://www.figma.com/api/mcp/asset/dafc4e55-49e7-4e36-bf9e-f6bc9f7cbbb3",
+          }}
           style={styles.logo}
         />
         <Text style={styles.title}>Créer mon compte</Text>
@@ -103,7 +108,9 @@ export default function SignupScreen() {
 
       <View style={styles.footer}>
         <Text style={styles.footerText}>Déjà inscrit ? </Text>
-        <Text style={styles.link} onPress={() => router.push('/login')}>Se connecter</Text>
+        <Text style={styles.link} onPress={() => router.push("/login")}>
+          Se connecter
+        </Text>
       </View>
     </ScrollView>
   );
@@ -113,11 +120,11 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 24,
-    backgroundColor: '#F9F9F9',
-    justifyContent: 'center',
+    backgroundColor: "#F9F9F9",
+    justifyContent: "center",
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 32,
     marginTop: 40,
   },
@@ -128,63 +135,63 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    color: '#1a1c1c',
-    fontFamily: 'GoogleSansText-Bold',
-    textAlign: 'center',
+    color: "#1a1c1c",
+    fontFamily: "GoogleSansText-Bold",
+    textAlign: "center",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#3e4943',
-    textAlign: 'center',
-    fontFamily: 'GoogleSansText-Regular',
+    color: "#3e4943",
+    textAlign: "center",
+    fontFamily: "GoogleSansText-Regular",
     paddingHorizontal: 20,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 24,
     borderRadius: 32,
-    width: '100%',
-    boxShadow: '0px 1px 1px rgba(0, 0, 0, 0.05)',
+    width: "100%",
+    boxShadow: "0px 1px 1px rgba(0, 0, 0, 0.05)",
     elevation: 2,
   },
   divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginVertical: 24,
   },
   line: {
     flex: 1,
     height: 1,
-    backgroundColor: '#ccc',
+    backgroundColor: "#ccc",
   },
   dividerText: {
     marginHorizontal: 12,
-    color: '#3e4943',
+    color: "#3e4943",
     fontSize: 12,
-    fontFamily: 'GoogleSansText-Regular',
-    textTransform: 'uppercase',
+    fontFamily: "GoogleSansText-Regular",
+    textTransform: "uppercase",
   },
   googleButton: {
-    backgroundColor: '#fff',
-    borderColor: '#ccc',
+    backgroundColor: "#fff",
+    borderColor: "#ccc",
     borderWidth: 1,
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     marginTop: 32,
     marginBottom: 40,
   },
   footerText: {
     fontSize: 16,
-    color: '#3e4943',
-    fontFamily: 'GoogleSansText-Regular',
+    color: "#3e4943",
+    fontFamily: "GoogleSansText-Regular",
   },
   link: {
     fontSize: 16,
-    color: '#2d936c',
-    fontWeight: '600',
-    fontFamily: 'GoogleSansText-Medium',
+    color: "#2d936c",
+    fontWeight: "600",
+    fontFamily: "GoogleSansText-Medium",
   },
 });

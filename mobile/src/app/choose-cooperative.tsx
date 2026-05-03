@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert, FlatList } from 'react-native';
-import { useRouter } from 'expo-router';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Ionicons } from '@expo/vector-icons';
-import { authClient } from '@/lib/auth-client';
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, ScrollView, Alert, FlatList } from "react-native";
+import { useRouter } from "expo-router";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Ionicons } from "@expo/vector-icons";
+import { authClient } from "@/lib/auth-client";
 
 export default function ChooseCooperativeScreen() {
   const router = useRouter();
   const [cooperatives, setCooperatives] = useState<any[]>([]);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
 
@@ -22,18 +22,18 @@ export default function ChooseCooperativeScreen() {
     try {
       const token = await authClient.getToken();
       const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/api/cooperatives`, {
-        headers: { 'Authorization': `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();
       setCooperatives(data);
     } catch (e: any) {
-      console.error('Failed to fetch cooperatives:', e);
+      console.error("Echec de la récupération des coopératives", e);
     }
   };
 
   const handleCreate = async () => {
     if (!name) {
-      Alert.alert('Erreur', 'Le nom de la coopérative est requis');
+      Alert.alert("Erreur", "Le nom de la coopérative est requis");
       return;
     }
 
@@ -41,20 +41,20 @@ export default function ChooseCooperativeScreen() {
     try {
       const token = await authClient.getToken();
       const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/api/cooperatives`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ name, description }),
       });
 
-      if (!response.ok) throw new Error('Failed to create cooperative');
+      if (!response.ok) throw new Error("Failed to create cooperative");
 
-      Alert.alert('Succès', 'Coopérative créée avec succès !');
-      router.replace('/(tabs)');
+      Alert.alert("Succès", "Coopérative créée avec succès !");
+      router.replace("/(tabs)");
     } catch (e: any) {
-      Alert.alert('Erreur', e.message);
+      Alert.alert("Erreur", e.message);
     } finally {
       setLoading(false);
     }
@@ -64,24 +64,27 @@ export default function ChooseCooperativeScreen() {
     setLoading(true);
     try {
       const token = await authClient.getToken();
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/api/cooperatives/join`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_BASE_URL}/api/cooperatives/join`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ cooperativeId }),
         },
-        body: JSON.stringify({ cooperativeId }),
-      });
+      );
 
       if (!response.ok) {
         const result = await response.json();
-        throw new Error(result.error || 'Failed to join cooperative');
+        throw new Error(result.error || "Failed to join cooperative");
       }
 
-      Alert.alert('Succès', 'Vous avez rejoint la coopérative !');
-      router.replace('/(tabs)');
+      Alert.alert("Succès", "Vous avez rejoint la coopérative !");
+      router.replace("/(tabs)");
     } catch (e: any) {
-      Alert.alert('Erreur', e.message);
+      Alert.alert("Erreur", e.message);
     } finally {
       setLoading(false);
     }
@@ -91,7 +94,9 @@ export default function ChooseCooperativeScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Ma Coopérative</Text>
-        <Text style={styles.subtitle}>Créez votre propre coopérative ou rejoignez-en une existante pour commencer.</Text>
+        <Text style={styles.subtitle}>
+          Créez votre propre coopérative ou rejoignez-en une existante pour commencer.
+        </Text>
       </View>
 
       {!creating ? (
@@ -115,7 +120,9 @@ export default function ChooseCooperativeScreen() {
               </View>
             )}
             scrollEnabled={false}
-            ListEmptyComponent={<Text style={styles.emptyText}>Aucune coopérative disponible pour le moment.</Text>}
+            ListEmptyComponent={
+              <Text style={styles.emptyText}>Aucune coopérative disponible pour le moment.</Text>
+            }
           />
 
           <View style={styles.divider}>
@@ -146,17 +153,8 @@ export default function ChooseCooperativeScreen() {
             placeholder="Décrivez vos objectifs..."
           />
           <View style={styles.buttonGroup}>
-            <Button
-              title="Annuler"
-              onPress={() => setCreating(false)}
-              variant="tertiary"
-            />
-            <Button
-              title="Créer"
-              onPress={handleCreate}
-              loading={loading}
-              variant="primary"
-            />
+            <Button title="Annuler" onPress={() => setCreating(false)} variant="tertiary" />
+            <Button title="Créer" onPress={handleCreate} loading={loading} variant="primary" />
           </View>
         </View>
       )}
@@ -168,25 +166,25 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 24,
-    backgroundColor: '#F9F9F9',
+    backgroundColor: "#F9F9F9",
     paddingTop: 60,
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 32,
   },
   title: {
     fontSize: 32,
-    color: '#1a1c1c',
-    fontFamily: 'GoogleSansText-Bold',
-    textAlign: 'center',
+    color: "#1a1c1c",
+    fontFamily: "GoogleSansText-Bold",
+    textAlign: "center",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#3e4943',
-    textAlign: 'center',
-    fontFamily: 'GoogleSansText-Regular',
+    color: "#3e4943",
+    textAlign: "center",
+    fontFamily: "GoogleSansText-Regular",
     paddingHorizontal: 20,
   },
   selectionSection: {
@@ -194,20 +192,20 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    color: '#1a1c1c',
-    fontFamily: 'GoogleSansText-Bold',
+    color: "#1a1c1c",
+    fontFamily: "GoogleSansText-Bold",
     marginBottom: 12,
   },
   coopItem: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 16,
     borderRadius: 24,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#e2e2e2',
+    borderColor: "#e2e2e2",
   },
   coopInfo: {
     flex: 1,
@@ -215,46 +213,46 @@ const styles = StyleSheet.create({
   },
   coopName: {
     fontSize: 18,
-    color: '#1a1c1c',
-    fontFamily: 'GoogleSansText-Bold',
+    color: "#1a1c1c",
+    fontFamily: "GoogleSansText-Bold",
   },
   coopDesc: {
     fontSize: 14,
-    color: '#666',
-    fontFamily: 'GoogleSansText-Regular',
+    color: "#666",
+    fontFamily: "GoogleSansText-Regular",
   },
   joinButton: {
     paddingHorizontal: 16,
   },
   divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginVertical: 24,
   },
   line: {
     flex: 1,
     height: 1,
-    backgroundColor: '#ccc',
+    backgroundColor: "#ccc",
   },
   dividerText: {
     marginHorizontal: 12,
-    color: '#3e4943',
+    color: "#3e4943",
     fontSize: 12,
-    fontFamily: 'GoogleSansText-Regular',
-    textTransform: 'uppercase',
+    fontFamily: "GoogleSansText-Regular",
+    textTransform: "uppercase",
   },
   creationSection: {
     gap: 20,
   },
   buttonGroup: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
     marginTop: 12,
   },
   emptyText: {
-    textAlign: 'center',
-    color: '#666',
-    fontFamily: 'GoogleSansText-Regular',
+    textAlign: "center",
+    color: "#666",
+    fontFamily: "GoogleSansText-Regular",
     marginVertical: 20,
   },
 });

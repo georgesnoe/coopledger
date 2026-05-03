@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert, ScrollView, TouchableOpacity } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, Alert, ScrollView, TouchableOpacity } from "react-native";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Ionicons } from "@expo/vector-icons";
+import * as SecureStore from "expo-secure-store";
 
 export default function VerifyWhatsAppScreen() {
   const router = useRouter();
-  const { userId, phoneNumber } = useLocalSearchParams<{ userId: string; phoneNumber: string }>();
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
+  const [userId] = useState(SecureStore.getItem("user_id"));
+  const [phoneNumber] = useState(SecureStore.getItem("phone_number"));
 
   useEffect(() => {
     if (userId && phoneNumber) {
@@ -19,38 +21,44 @@ export default function VerifyWhatsAppScreen() {
 
   const sendCode = async () => {
     try {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/api/auth/whatsapp/send-code`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, phoneNumber }),
-      });
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_BASE_URL}/api/auth/whatsapp/send-code`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, phoneNumber: `228${phoneNumber}` }),
+        },
+      );
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Failed to send code');
+      if (!response.ok) throw new Error(data.error || "Failed to send code");
     } catch (e: any) {
-      Alert.alert('Erreur', e.message);
+      Alert.alert("Erreur", e.message);
     }
   };
 
   const handleVerify = async () => {
     if (!code) {
-      Alert.alert('Erreur', 'Veuillez entrer le code de vérification');
+      Alert.alert("Erreur", "Veuillez entrer le code de vérification");
       return;
     }
 
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/api/auth/whatsapp/verify`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, code }),
-      });
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_BASE_URL}/api/auth/whatsapp/verify`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, code }),
+        },
+      );
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Verification failed');
+      if (!response.ok) throw new Error(data.error || "Verification failed");
 
-      Alert.alert('Succès', 'Votre compte a été vérifié avec succès !');
-      router.replace('/choose-cooperative');
+      Alert.alert("Succès", "Votre compte a été vérifié avec succès !");
+      router.replace("/choose-cooperative");
     } catch (e: any) {
-      Alert.alert('Erreur', e.message);
+      Alert.alert("Erreur", e.message);
     } finally {
       setLoading(false);
     }
@@ -64,7 +72,7 @@ export default function VerifyWhatsAppScreen() {
         </View>
         <Text style={styles.title}>Vérification</Text>
         <Text style={styles.subtitle}>
-          Nous avons envoyé un code de vérification à{'\n'}
+          Nous avons envoyé un code de vérification à{"\n"}
           <Text style={styles.phone}>{phoneNumber}</Text>
         </Text>
       </View>
@@ -101,69 +109,69 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 24,
-    backgroundColor: '#F9F9F9',
-    justifyContent: 'center',
+    backgroundColor: "#F9F9F9",
+    justifyContent: "center",
     paddingTop: 60,
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 40,
   },
   iconCircle: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: '#eee',
-    boxShadow: '0px 2px 3px rgba(0, 0, 0, 0.05)',
+    borderColor: "#eee",
+    boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.05)",
     elevation: 2,
   },
   title: {
     fontSize: 32,
-    color: '#1a1c1c',
-    fontFamily: 'GoogleSansText-Bold',
-    textAlign: 'center',
+    color: "#1a1c1c",
+    fontFamily: "GoogleSansText-Bold",
+    textAlign: "center",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#3e4943',
-    textAlign: 'center',
-    fontFamily: 'GoogleSansText-Regular',
+    color: "#3e4943",
+    textAlign: "center",
+    fontFamily: "GoogleSansText-Regular",
     lineHeight: 24,
   },
   phone: {
     fontSize: 16,
-    color: '#1a1c1c',
-    fontFamily: 'GoogleSansText-Bold',
+    color: "#1a1c1c",
+    fontFamily: "GoogleSansText-Bold",
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 24,
     borderRadius: 32,
     borderWidth: 1,
-    borderColor: '#eee',
-    boxShadow: '0px 1px 1px rgba(0, 0, 0, 0.05)',
+    borderColor: "#eee",
+    boxShadow: "0px 1px 1px rgba(0, 0, 0, 0.05)",
     elevation: 2,
   },
   divider: {
     marginTop: 24,
-    alignItems: 'center',
+    alignItems: "center",
     gap: 8,
   },
   dividerText: {
     fontSize: 14,
-    color: '#666',
-    fontFamily: 'GoogleSansText-Regular',
+    color: "#666",
+    fontFamily: "GoogleSansText-Regular",
   },
   resendLink: {
     fontSize: 14,
-    color: '#2d936c',
-    fontFamily: 'GoogleSansText-Medium',
-    fontWeight: '600',
+    color: "#2d936c",
+    fontFamily: "GoogleSansText-Medium",
+    fontWeight: "600",
   },
 });
