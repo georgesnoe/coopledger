@@ -26,4 +26,4 @@ COPY --from=builder /app/package.json ./
 
 EXPOSE 3000
 
-CMD ["node", "dist/server.cjs"]
+CMD ["node", "dist/server.mjs"]

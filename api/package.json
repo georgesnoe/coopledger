@@ -1,62 +1,68 @@
 {
-  "name": "api",
-  "version": "0.1.0",
+  "name": "coopledger-api",
+  "version": "0.0.0",
   "description": "CoopLedger API made with ExpressJS",
   "keywords": [
     "api",
-    "blockchain",
+    "expressjs",
     "coopledger",
-    "expressjs"
+    "blockchain",
+    "miabe-hackathon",
+    "tg-28"
   ],
   "homepage": "https://github.com/georgesnoe/coopledger#readme",
   "bugs": {
     "url": "https://github.com/georgesnoe/coopledger/issues"
   },
-  "license": "MIT",
-  "author": "Equipe TG-28",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/georgesnoe/coopledger.git"
   },
+  "license": "MIT",
+  "author": "Equipe TG-28",
   "type": "module",
-  "main": "dist/server.js",
+  "main": "dist/server.mjs",
   "scripts": {
     "dev": "nodemon",
-    "build": "tsc -b && node esbuild.config.js",
-    "build:bundle": "node esbuild.config.js",
-    "start": "node dist/server.cjs",
+    "build": "prisma generate && tsc -b && node esbuild.config.mjs",
+    "start": "node dist/server.mjs",
     "lint": "biome check --fix",
-    "format": "biome format --fix"
+    "format": "biome format --fix",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:push": "prisma db push"
   },
   "dependencies": {
     "@better-auth/expo": "^1.6.9",
-    "@neondatabase/serverless": "^1.1.0",
-    "axios": "^1.9.0",
-    "bcryptjs": "^3.0.3",
+    "@prisma/adapter-neon": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "better-auth": "^1.6.9",
-    "bullmq": "^5.76.4",
+    "bullmq": "^5.76.5",
+    "compression": "^1.8.1",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
-    "drizzle-orm": "^0.45.2",
     "express": "^5.2.1",
     "ioredis": "^5.10.1",
-    "jsonwebtoken": "^9.0.3",
-    "nanoid": "^5.1.0",
+    "morgan": "^1.10.1",
+    "nanoid": "^5.1.11",
     "socket.io": "^4.8.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.13",
-    "@types/bcryptjs": "^2.4.6",
+    "@biomejs/biome": "^2.4.14",
+    "@types/compression": "^1.8.1",
+    "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/ioredis": "^4.28.10",
-    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
     "@types/node": "^25.6.0",
     "@types/socket.io": "^3.0.1",
-    "drizzle-kit": "^0.31.10",
     "esbuild": "^0.28.0",
     "nodemon": "^3.1.14",
+    "prisma": "^7.8.0",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^6.0.3"
   }
 }
