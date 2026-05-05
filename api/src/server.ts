@@ -1,24 +1,30 @@
 import "dotenv/config";
 import crypto from "node:crypto";
 import { createServer } from "node:http";
-import express from "express";
 import cors from "cors";
+import express, {
+	type NextFunction,
+	type Request,
+	type Response,
+} from "express";
 import { Redis } from "ioredis";
 import { Server } from "socket.io";
-import { WhatsAppAuthService } from "@/lib/whatsapp-auth";
 import { AuthService } from "@/lib/auth-service";
+import { WhatsAppAuthService } from "@/lib/whatsapp-auth";
 import "@/lib/vote-worker";
+import { desc, eq } from "drizzle-orm";
 import { db } from "@/db/config";
-import { user, wallet, transaction, member, cooperative, session } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { cooperative, member, transaction, user, wallet } from "@/db/schema";
 
 const app = express();
-app.use(cors({
-	origin: '*',
-	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-	preflightContinue: false,
-	optionsSuccessStatus: 204,
-}));
+app.use(
+	cors({
+		origin: "*",
+		methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+		preflightContinue: false,
+		optionsSuccessStatus: 204,
+	}),
+);
 const server = createServer(app);
 const io = new Server(server);
 const redis = new Redis(process.env.REDIS_URL as string, {
@@ -29,14 +35,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Auth Middleware
-const authenticate = async (req: any, res: any, next: any) => {
-	const token = req.headers.authorization?.split(' ')[1];
+const authenticate = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	const token = req.headers.authorization?.split(" ")[1];
 	if (!token) return res.status(401).json({ error: "Unauthorized" });
 
 	const userId = await AuthService.validateSession(token);
-	if (!userId) return res.status(401).json({ error: "Invalid or expired session" });
+	if (!userId)
+		return res.status(401).json({ error: "Invalid or expired session" });
 
-	req.userId = userId;
+	req.params.userId = userId;
 	next();
 };
 
@@ -48,21 +59,27 @@ app.post("/api/auth/signup", async (req, res) => {
 
 	try {
 		const existingUser = await db.query.user.findFirst({
-			where: (user, { or }) => or(eq(user.email, email), eq(user.phoneNumber, phoneNumber)),
+			where: (user, { or }) =>
+				or(eq(user.email, email), eq(user.phoneNumber, phoneNumber)),
 		});
 
 		if (existingUser) {
-			return res.status(400).json({ error: "Email or phone number already registered" });
+			return res
+				.status(400)
+				.json({ error: "Email or phone number already registered" });
 		}
 
 		const hashedPassword = await AuthService.hashPassword(password);
-		const newUser = await db.insert(user).values({
-			id: crypto.randomUUID(),
-			name,
-			email,
-			phoneNumber,
-			password: hashedPassword,
-		}).returning();
+		const newUser = await db
+			.insert(user)
+			.values({
+				id: crypto.randomUUID(),
+				name,
+				email,
+				phoneNumber,
+				password: hashedPassword,
+			})
+			.returning();
 
 		const { token } = await AuthService.createSession(newUser[0].id);
 		res.json({ user: newUser[0], token });
@@ -83,7 +100,10 @@ app.post("/api/auth/login", async (req, res) => {
 			where: eq(user.email, email),
 		});
 
-		if (!userData || !(await AuthService.comparePassword(password, userData.password))) {
+		if (
+			!userData ||
+			!(await AuthService.comparePassword(password, userData.password))
+		) {
 			return res.status(401).json({ error: "Invalid credentials" });
 		}
 
@@ -95,9 +115,9 @@ app.post("/api/auth/login", async (req, res) => {
 	}
 });
 
-app.get("/api/auth/me", authenticate, async (req: any, res) => {
+app.get("/api/auth/me", authenticate, async (req, res) => {
 	try {
-		const userId = req.userId;
+		const userId = req.params.userId;
 		const [userData, memberships] = await Promise.all([
 			db.query.user.findFirst({
 				where: eq(user.id, userId),
@@ -119,11 +139,16 @@ app.get("/api/auth/me", authenticate, async (req: any, res) => {
 app.post("/api/auth/whatsapp/send-code", async (req, res) => {
 	const { userId, phoneNumber } = req.body;
 	if (!userId || !phoneNumber) {
-		return res.status(400).json({ error: "userId and phoneNumber are required" });
+		return res
+			.status(400)
+			.json({ error: "userId and phoneNumber are required" });
 	}
 
 	try {
-		const result = await WhatsAppAuthService.generateAndSendCode(userId, phoneNumber);
+		const result = await WhatsAppAuthService.generateAndSendCode(
+			userId,
+			phoneNumber,
+		);
 		res.json(result);
 	} catch (e: unknown) {
 		const error = e as Error;
@@ -202,12 +227,15 @@ app.post("/api/cooperatives", authenticate, async (req: any, res) => {
 	}
 
 	try {
-		const newCoop = await db.insert(cooperative).values({
-			id: crypto.randomUUID(),
-			name,
-			description,
-			founderId: req.userId,
-		}).returning();
+		const newCoop = await db
+			.insert(cooperative)
+			.values({
+				id: crypto.randomUUID(),
+				name,
+				description,
+				founderId: req.userId,
+			})
+			.returning();
 
 		await db.insert(member).values({
 			id: crypto.randomUUID(),
@@ -231,11 +259,17 @@ app.post("/api/cooperatives/join", authenticate, async (req: any, res) => {
 
 	try {
 		const existingMember = await db.query.member.findFirst({
-			where: (member, { and }) => and(eq(member.userId, req.userId), eq(member.cooperativeId, cooperativeId)),
+			where: (member, { and }) =>
+				and(
+					eq(member.userId, req.userId),
+					eq(member.cooperativeId, cooperativeId),
+				),
 		});
 
 		if (existingMember) {
-			return res.status(400).json({ error: "You are already a member of this cooperative" });
+			return res
+				.status(400)
+				.json({ error: "You are already a member of this cooperative" });
 		}
 
 		await db.insert(member).values({
@@ -269,10 +303,13 @@ app.get("/api/user/dashboard", authenticate, async (req: any, res) => {
 		]);
 
 		if (memberships.length === 0) {
-			return res.status(403).json({ error: "You must belong to at least one cooperative to access the dashboard" });
+			return res.status(403).json({
+				error:
+					"You must belong to at least one cooperative to access the dashboard",
+			});
 		}
 
-		const cooperatives = memberships.map(m => m.cooperative);
+		const cooperatives = memberships.map((m) => m.cooperative);
 		const transactionsData = await db.query.transaction.findMany({
 			limit: 10,
 			orderBy: [desc(transaction.createdAt)],

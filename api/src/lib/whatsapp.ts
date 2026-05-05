@@ -1,5 +1,6 @@
 import axios from "axios";
 
+// biome-ignore lint/complexity/noStaticOnlyClass: ignore
 export class WhatsAppService {
 	private static apiUrl = process.env.GOWA_URL || "http://localhost:3000";
 	private static getAuthHeader() {
@@ -13,39 +14,35 @@ export class WhatsAppService {
 	}
 
 	private static formatPhoneNumber(phone: string) {
-		const cleaned = phone.replace(/^(\+|00)/, '').replace(/[\s\-()]/g, '');
+		const cleaned = phone.replace(/^(\+|00)/, "").replace(/[\s\-()]/g, "");
 		return `${cleaned}@s.whatsapp.net`;
 	}
 
 	static async sendMessage(to: string, message: string, deviceId?: string) {
 		try {
 			const response = await axios.post(
-				`${this.apiUrl}/send/message`,
+				`${WhatsAppService.apiUrl}/send/message`,
 				{
-											phone: to,
+					phone: to,
 					message: message,
 				},
 				{
 					headers: {
-						"X-Device-Id": deviceId || process.env.GOWA_DEFAULT_DEVICE_ID,
-						Authorization: this.getAuthHeader(),
+						Authorization: WhatsAppService.getAuthHeader(),
 					},
 				},
 			);
 			return response.data;
 		} catch (error: unknown) {
 			const err = error as Error & { response?: unknown };
-			console.error(
-				"Error sending WhatsApp message:",
-				err.message,
-			);
+			console.error("Error sending WhatsApp message:", err.message);
 			throw error;
 		}
 	}
 
 	static async sendConfirmationCode(phoneNumber: string, code: string) {
 		const message = `Your CoopLedger confirmation code is: ${code}. Please enter this code in the app to verify your account.`;
-		return this.sendMessage(phoneNumber, message);
+		return WhatsAppService.sendMessage(phoneNumber, message);
 	}
 
 	static async sendVoteNotification(
@@ -54,6 +51,7 @@ export class WhatsAppService {
 		result: string,
 	) {
 		const message = `The vote for "${voteQuestion}" has finished!\n\nResult: ${result}\n\nThank you for participating in CoopLedger!`;
-		return this.sendMessage(phoneNumber, message);
+		return WhatsAppService.sendMessage(phoneNumber, message);
 	}
 }
+
