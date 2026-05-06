@@ -8,19 +8,21 @@ datasource db {
 }
 
 model Users {
-  id                  String     @id
-  name                String
-  email               String
-  emailVerified       Boolean    @default(false)
-  image               String?
-  createdAt           DateTime   @default(now())
-  updatedAt           DateTime   @updatedAt
-  role                UserRole[] @default([FARMER])
-  publicKey           String?
-  encryptedPrivateKey String?
-  sessions            Sessions[]
-  accounts            Accounts[]
-  transactions        Transactions[]
+  id                    String     @id
+  name                  String
+  email                 String
+  emailVerified         Boolean    @default(false)
+  image                 String?
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+  role                  UserRole   @default(FARMER)
+  publicKey             String?
+  encryptedPrivateKey   String?
+  sessions              Sessions[]
+  accounts              Accounts[]
+  transactions          Transactions[]
+  memberships           Memberships[]
+  cooperativesCreated   Cooperatives[]
 
   @@unique([email, publicKey])
   @@map("users")
@@ -84,7 +86,32 @@ model Transactions {
   userId          String
   user            Users               @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt       DateTime            @default(now())
-  }
+}
+
+model Cooperatives {
+  id      String          @id @default(uuid())
+  name    String
+  adminId String
+  admin   Users           @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  members Memberships[]
+}
+
+model Memberships {
+  userId        String
+  cooperativeId String
+  status        MembershipStatus  @default(PENDING)
+  role          MembershipRole    @default(MEMBER)
+  user          Users             @relation(fields: [userId], references: [id], onDelete: Cascade) 
+  cooperative   Cooperatives      @relation(fields: [cooperativeId], references: [id], onDelete: Cascade)
+
+  @@id([userId, cooperativeId])
+}
+
+enum MembershipStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
 
 enum TransactionStatus {
   PENDING
@@ -94,5 +121,10 @@ enum TransactionStatus {
 
 enum UserRole {
   FARMER
+}
+
+enum MembershipRole {
+  ADMIN
+  MEMBER
 }
 

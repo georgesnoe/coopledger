@@ -25,22 +25,10 @@ export const auth = betterAuth({
   },
   user: {
     additionalFields: {
-      role: {
-        type: "string[]",
-        input: false,
+      phoneNumber: {
+        type: "string",
+        input: true,
         required: true,
-        defaultValue: ["FARMER"],
-      },
-      publicKey: {
-        type: "string",
-        input: false,
-        required: false,
-        unique: true,
-      },
-      encryptedPrivateKey: {
-        type: "string",
-        input: false,
-        required: false,
       },
     },
   },
