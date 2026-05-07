@@ -18,6 +18,8 @@ model Users {
   role                  UserRole      @default(USER)
   publicKey             String?
   encryptedPrivateKey   String?
+  votes                 Votes[]
+  voteCasts             VoteCasts[]
   sessions              Sessions[]
   accounts              Accounts[]
   transactions          Transactions[]
@@ -132,6 +134,27 @@ model EncryptedDocument {
   proofDocumentOf         Cooperatives[] @relation("ProofDocument")
   identityDocumentOf      Cooperatives[] @relation("IdentityDocument")
   businessPlanDocumentOf  Cooperatives[] @relation("BusinessPlanDocument")
+  createdAt               DateTime       @default(now())
+}
+
+model Votes {
+  id                      String         @id @default(uuid())
+  subject                 String
+  proposals               String[]
+  endDate                 DateTime
+  creatorId               String
+  creator                 Users          @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  createdAt               DateTime       @default(now())
+
+  VoteCasts               VoteCasts[]
+}
+
+model VoteCasts {
+  id                      String         @id @default(uuid())
+  voteId                  String
+  userId                  String
+  user                    Users          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vote                    Votes          @relation(fields: [voteId], references: [id], onDelete: Cascade)
   createdAt               DateTime       @default(now())
 }
 
