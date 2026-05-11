@@ -1,11 +1,8 @@
-import { z } from "zod/mini";
+import { z } from "zod";
 
 const envSchema = z.object({
-  NODE_ENV: z._default(
-    z.enum(["development", "test", "production"]),
-    "development",
-  ),
-  PORT: z._default(z.transform(Number), 3000),
+  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+  PORT: z.coerce.number().default(3000),
   API_BASE_URL: z.string(),
   DATABASE_URL: z.string(),
   REDIS_URL: z.string(),
@@ -13,10 +10,7 @@ const envSchema = z.object({
   BETTER_AUTH_SECRET: z.string(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
-  ENCRYPTION_KEY: z._default(
-    z.string().check(z.minLength(12), z.maxLength(64), z.trim()),
-    "strong-encryption-key",
-  ),
+  ENCRYPTION_KEY: z.string().min(12).max(64).default("strong-encryption-key"),
   POLYGON_RPC_URL: z.string(),
   GOWA_API_URL: z.string(),
   GOWA_API_BASIC_AUTH: z.string(),
@@ -30,7 +24,7 @@ const envSchema = z.object({
   PINATA_API_KEY: z.string(),
   PINATA_API_SECRET: z.string(),
   PINATA_JWT: z.string(),
-  ALGORITHM: z._default(z.string(), "aes-256-ocb"),
+  ALGORITHM: z.string().default("aes-256-ocb"),
   CONTRACT_ADDRESS: z.string(),
 });
 

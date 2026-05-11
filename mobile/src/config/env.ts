@@ -1,11 +1,8 @@
-import { z } from "zod/mini";
+import { z } from "zod";
 
 const envSchema = z.object({
-  NODE_ENV: z._default(
-    z.enum(["development", "test", "production"]),
-    "development",
-  ),
-  API_BASE_URL: z._default(z.string(), "https://coopledger-api.onrender.com"),
+  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+  API_BASE_URL: z.string().default("https://coopledger-api.onrender.com"),
 });
 
 const _env = envSchema.safeParse(process.env);
