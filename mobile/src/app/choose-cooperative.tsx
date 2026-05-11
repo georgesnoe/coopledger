@@ -7,7 +7,6 @@ import {
   Alert,
   FlatList,
   TouchableOpacity,
-  Image,
 } from "react-native";
 import { useRouter } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
@@ -16,7 +15,6 @@ import { Input } from "@/components/ui/Input";
 import { authClient, getAuthToken } from "@/utils/auth-client";
 import { env } from "@/config/env";
 import { Ionicons } from "@expo/vector-icons";
-import * as SecureStore from "expo-secure-store";
 
 interface FileAsset {
   uri: string;

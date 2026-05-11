@@ -1,4 +1,5 @@
 import { MembershipGrade, MembershipRole, MembershipStatus } from "@/db/enums";
+import { ethers } from "ethers";
 import type { Request, Response } from "express";
 import { cloudinary, pinata } from "@/server";
 import {
@@ -7,6 +8,7 @@ import {
   generateCoopKey,
 } from "@/services/crypto.service";
 import { prisma } from "@/utils/prisma";
+import * as BlockchainService from "@/services/blockchain.service";
 
 export async function createCooperative(req: Request, res: Response) {
   const { name, description, founders, latitude, longitude } = req.body;
@@ -145,6 +147,20 @@ export async function createCooperative(req: Request, res: Response) {
           businessPlanDocumentIpfsCid: businessPlanDocumentObject?.ipfsCid,
         },
       });
+
+      // Ancrage Blockchain de la création de la coopérative
+      try {
+          await BlockchainService.recordProofOnChain(
+            createdCooperative.id,
+            ethers.keccak256(ethers.toUtf8Bytes(createdCooperative.name)),
+            statusDocumentObject.ipfsCid,
+            0,
+            0 // Type 0 = Création / Statuts
+          );
+      } catch (bcError) {
+          console.error("Erreur ancrage blockchain coop:", bcError);
+          // On ne bloque pas la création en DB si la blockchain échoue pour le hackathon
+      }
 
       // Le créateur devient Admin membre automatiquement
       await tx.memberships.create({
