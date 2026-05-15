@@ -2,6 +2,7 @@ import {
   approveCooperativeJoin,
   createCooperative,
   getCooperatives,
+  getCooperativeMembers,
   joinCooperative,
 } from "@/controllers/cooperatives.controller";
 import { Router } from "express";
@@ -26,6 +27,7 @@ cooperativesRoutes.post(
   createCooperative,
 );
 cooperativesRoutes.get("/", isAuthenticated, getCooperatives);
+cooperativesRoutes.get("/:id/members", isAuthenticated, getCooperativeMembers);
 cooperativesRoutes.post("/join", isAuthenticated, joinCooperative);
 cooperativesRoutes.post(
   "/join/approve",

@@ -185,6 +185,23 @@ export async function joinCooperative(req: Request, res: Response) {
   return res.end();
 }
 
+export async function getCooperativeMembers(req: Request, res: Response) {
+  const { id } = req.params;
+
+  try {
+    const members = await prisma.memberships.findMany({
+      where: { cooperativeId: id },
+      include: { user: true },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    res.status(200).json(members);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Erreur lors de la récupération des membres" });
+  }
+}
+
 export async function approveCooperativeJoin(req: Request, res: Response) {
   const { cooperativeId, memberId, isApproved } = req.body;
 
