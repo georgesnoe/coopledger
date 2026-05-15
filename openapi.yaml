@@ -1,13 +1,13 @@
 openapi: 3.0.3
 info:
   title: CoopLedger API
-  description: API pour la gestion des coopératives agricoles (Hackathon TG-28)
-  version: 0.0.0
+  description: API pour la gestion des coopératives agricoles intégrant la blockchain pour la transparence.
+  version: 1.0.0
 servers:
   - url: /api
 paths:
   /auth/{any}:
-    all:
+    get:
       summary: Points d'entrée pour l'authentification (Better-Auth)
       parameters:
         - name: any
@@ -18,6 +18,55 @@ paths:
       responses:
         '200':
           description: OK
+    post:
+      summary: Points d'entrée pour l'authentification (Better-Auth)
+      parameters:
+        - name: any
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+  /auth/whatsapp/send-code:
+    post:
+      summary: Envoyer un code OTP via WhatsApp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phone:
+                  type: string
+      responses:
+        '200':
+          description: Code envoyé
+  /auth/whatsapp/verify:
+    post:
+      summary: Vérifier le code OTP WhatsApp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phone:
+                  type: string
+                code:
+                  type: string
+      responses:
+        '200':
+          description: Code vérifié
+  /cooperatives:
+    get:
+      summary: Lister les coopératives
+      responses:
+        '200':
+          description: Liste des coopératives
   /cooperatives/create:
     post:
       summary: Créer une nouvelle coopérative
@@ -139,14 +188,45 @@ paths:
       responses:
         '201':
           description: Vote enregistré
-  /payments/membership-fee:
+  /payments/initiate:
     post:
-      summary: Initier le paiement d'une cotisation (MVP simple)
+      summary: Initier un paiement via FedaPay
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Transaction FedaPay créée
+  /payments/callback:
+    post:
+      summary: Webhook de confirmation de paiement FedaPay
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Callback traité
+  /user/dashboard:
+    get:
+      summary: Récupérer les données du tableau de bord utilisateur
       security:
         - cookieAuth: []
       responses:
         '200':
-          description: Transaction FedaPay créée
+          description: Données du dashboard
 components:
   securitySchemes:
     cookieAuth:
