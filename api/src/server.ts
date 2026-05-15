@@ -39,7 +39,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.get("/api/governance", isAuthenticated, async (req, res) => {
   try {
-    const userId = req.session.user.id;
+    const userId = req.user.id;
     const membership = await prisma.memberships.findFirst({
       where: { userId, status: "ACCEPTED" },
       include: { cooperative: true }

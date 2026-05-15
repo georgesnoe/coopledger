@@ -138,7 +138,7 @@ export async function createCooperative(req: Request, res: Response) {
           latitude: latitude ? Number(latitude) : null,
           longitude: longitude ? Number(longitude) : null,
           encryptionKey: encryptedCoopKey,
-          creatorId: req.session.user.id,
+          creatorId: req.user.id,
           statusDocumentIpfsCid: statusDocumentObject.ipfsCid,
           proofDocumentIpfsCid: proofDocumentObject.ipfsCid,
           identityDocumentIpfsCid: identityDocumentObject.ipfsCid,
@@ -149,7 +149,7 @@ export async function createCooperative(req: Request, res: Response) {
       // Le créateur devient Admin membre automatiquement
       await tx.memberships.create({
         data: {
-          userId: req.session.user.id,
+          userId: req.user.id,
           cooperativeId: createdCooperative.id,
           status: MembershipStatus.ACCEPTED,
           grade: MembershipGrade.ADMIN,
@@ -215,7 +215,7 @@ export async function joinCooperative(req: Request, res: Response) {
 
       const createdMembership = await tx.memberships.create({
         data: {
-          userId: req.session.user.id,
+          userId: req.user.id,
           cooperativeId: cooperative.id,
           status: MembershipStatus.PENDING,
           grade: MembershipGrade.MEMBER,

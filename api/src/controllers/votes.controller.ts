@@ -26,7 +26,7 @@ export async function proposeVote(req: Request, res: Response) {
       // 1. Vérifier que l'auteur est membre du bureau
       const membership = await tx.memberships.findUnique({
         where: {
-          userId_cooperativeId: { userId: req.session.user.id, cooperativeId },
+          userId_cooperativeId: { userId: req.user.id, cooperativeId },
         },
       });
 
@@ -56,7 +56,7 @@ export async function proposeVote(req: Request, res: Response) {
           beneficiary: beneficiary as string,
           paymentDeadline: paymentDeadline ? new Date(paymentDeadline) : null,
           totalEligibleVoters: voterCount,
-          creatorId: req.session.user.id,
+          creatorId: req.user.id,
         },
       });
 
@@ -92,7 +92,7 @@ export async function castVote(req: Request, res: Response) {
       const membership = await tx.memberships.findUnique({
         where: {
           userId_cooperativeId: {
-            userId: req.session.user.id,
+            userId: req.user.id,
             cooperativeId: vote.cooperativeId,
           },
         },
@@ -108,7 +108,7 @@ export async function castVote(req: Request, res: Response) {
       const voteCast = await tx.voteCasts.create({
         data: {
           voteId: voteId,
-          userId: req.session.user.id,
+          userId: req.user.id,
           // Note: choiceIndex pourrait être stocké dans un futur champ si besoin de plus de détail
         },
       });
@@ -116,7 +116,7 @@ export async function castVote(req: Request, res: Response) {
       await tx.memberships.update({
         where: {
           userId_cooperativeId: {
-            userId: req.session.user.id,
+            userId: req.user.id,
             cooperativeId: vote.cooperativeId,
           },
         },

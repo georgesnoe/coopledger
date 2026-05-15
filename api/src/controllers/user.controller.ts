@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import { prisma } from "@/utils/prisma";
 
 export const getDashboardData = async (req: Request, res: Response) => {
-  const userId = req.session.user.id;
+  const userId = req.user.id;
 
   try {
     const user = await prisma.users.findUnique({

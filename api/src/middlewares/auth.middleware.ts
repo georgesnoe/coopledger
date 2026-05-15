@@ -1,13 +1,11 @@
-import { fromNodeHeaders } from "better-auth/node";
-import { UserRole } from "@/db/enums";
+import { UserRole } from "@prisma/client";
 import type { NextFunction, Request, Response } from "express";
-import { auth } from "@/utils/auth";
 import { prisma } from "@/utils/prisma";
 
 declare global {
   namespace Express {
     interface Request {
-      session: typeof auth.$Infer.Session;
+      user: any;
     }
   }
 }
@@ -25,21 +23,16 @@ export async function isAuthenticated(
   }
 
   try {
-    // better-auth's getSession expects a request object. 
-    // We wrap the existing request and ensure the session token is where it expects it.
-    const session = await auth.api.getSession({
-      headers: {
-        ...fromNodeHeaders(req.headers),
-        "authorization": `Bearer ${token}`,
-        "better-auth.session-token": token,
-      },
+    const session = await prisma.sessions.findFirst({
+      where: { token, expiresAt: { gte: new Date() } },
+      include: { users: true },
     });
 
     if (!session) {
       return res.status(401).json({ message: "Session not found or expired" });
     }
 
-    req.session = session;
+    req.user = session.users;
 
     next();
   } catch (error: unknown) {
@@ -50,28 +43,4 @@ export async function isAuthenticated(
 
     return res.status(401).json({ message: "Unauthorized" });
   }
-}
-
-export async function isPlatformAdmin(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
-  const { user } = req.session;
-  if (!user) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-
-  const isAdmin = await prisma.users.findUnique({
-    where: {
-      id: user.id,
-      role: UserRole.ADMIN,
-    },
-  });
-
-  if (!isAdmin) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-
-  next();
 }

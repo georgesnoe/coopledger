@@ -31,8 +31,8 @@ export async function initiatePayment(req: Request, res: Response) {
       currency: { iso: "XOF" },
       callbackUrl: `https://${env.API_BASE_URL}/api/payments/callback`,
       customer: {
-        email: req.session.user.email,
-        firstname: req.session.user.name,
+        email: req.user.email,
+        firstname: req.user.name,
       },
     });
 
@@ -44,7 +44,7 @@ export async function initiatePayment(req: Request, res: Response) {
         amount: Number(amount),
         type: type as TransactionType,
         status: TransactionStatus.PENDING,
-        userId: req.session.user.id,
+        userId: req.user.id,
         cooperativeId: cooperativeId,
         voteId: voteId || null,
       },
