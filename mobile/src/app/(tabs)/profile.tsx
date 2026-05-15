@@ -1,41 +1,80 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { Button } from '@/components/ui/Button';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { authClient } from '@/utils/auth-client';
+import { authClient, getAuthToken } from '@/utils/auth-client';
+import { env } from '@/config/env';
 
 export default function ProfileScreen() {
   const router = useRouter();
+  const [userData, setUserData] = useState<any>(null);
+  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadProfileData() {
+      try {
+        const session = await authClient.getSession();
+        if (session.data) {
+          setUserData(session.data.user);
+          
+          const token = await getAuthToken();
+          const response = await fetch(`${env.API_BASE_URL}/api/user/dashboard`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = await response.json();
+          setDashboardData(data);
+        }
+      } catch (e) {
+        console.error('Error loading profile data:', e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadProfileData();
+  }, []);
 
   const handleLogout = async () => {
     await authClient.signOut();
     router.replace('/login');
   };
 
+  if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color="#2d936c" />
+      </View>
+    );
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <View style={styles.avatarContainer}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>KG</Text>
+            <Text style={styles.avatarText}>
+              {userData?.name ? userData.name.charAt(0).toUpperCase() : 'U'}
+            </Text>
           </View>
         </View>
-        <Text style={styles.userName}>Kossi Georges-Noé</Text>
-        <Text style={styles.userPhone}>+228 90 00 00 00</Text>
+        <Text style={styles.userName}>{userData?.name || 'Utilisateur'}</Text>
+        <Text style={styles.userPhone}>{userData?.phoneNumber || 'Non renseigné'}</Text>
       </View>
 
       <View style={styles.statsContainer}>
         <View style={styles.statBox}>
-          <Text style={styles.statValue}>12</Text>
+          <Text style={styles.statValue}>{dashboardData?.cooperatives?.length || 0}</Text>
           <Text style={styles.statLabel}>Coopératives</Text>
         </View>
         <View style={[styles.statBox, styles.statBorder]}>
-          <Text style={styles.statValue}>48</Text>
+          <Text style={styles.statValue}>-</Text>
           <Text style={styles.statLabel}>Votes</Text>
         </View>
         <View style={styles.statBox}>
-          <Text style={styles.statValue}>1.2M</Text>
+          <Text style={styles.statValue}>
+            {dashboardData?.balance || '0'} {dashboardData?.currency || 'FCFA'}
+          </Text>
           <Text style={styles.statLabel}>Volume</Text>
         </View>
       </View>

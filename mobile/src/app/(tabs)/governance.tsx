@@ -1,9 +1,44 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { Button } from '@/components/ui/Button';
 import { Ionicons } from '@expo/vector-icons';
+import { getAuthToken } from '@/utils/auth-client';
+import { env } from '@/config/env';
 
 export default function GovernanceScreen() {
+  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadGovernanceData() {
+      try {
+        const token = await getAuthToken();
+        const response = await fetch(`${env.API_BASE_URL}/api/user/dashboard`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+        setDashboardData(data);
+      } catch (e) {
+        console.error('Error loading governance data:', e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadGovernanceData();
+  }, []);
+
+  const handleVote = async (vote: 'YES' | 'NO') => {
+    Alert.alert('Vote', `Vous avez voté ${vote}. Cette fonctionnalité sera bientôt disponible via l'API /api/votes/cast.`);
+  };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color="#2d936c" />
+      </View>
+    );
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
@@ -14,10 +49,12 @@ export default function GovernanceScreen() {
       <View style={styles.bentoBox}>
         <View style={styles.volumeCard}>
           <Text style={styles.volumeLabel}>VOLUME MENSUEL SÉCURISÉ</Text>
-          <Text style={styles.volumeValue}>12 450 000 FCFA</Text>
+          <Text style={styles.volumeValue}>
+            {dashboardData?.balance || '0'} {dashboardData?.currency || 'FCFA'}
+          </Text>
           <View style={styles.volumeTrend}>
             <Ionicons name="trending-up" size={12} color="#78d9ad" />
-            <Text style={styles.volumeTrendText}>+14% ce mois</Text>
+            <Text style={styles.volumeTrendText}>Données synchronisées</Text>
           </View>
         </View>
 
@@ -27,12 +64,12 @@ export default function GovernanceScreen() {
             <View style={styles.statusDot} />
           </View>
           <Text style={styles.statusValue}>Synchronisé</Text>
-          <Text style={styles.statusDetail}>Dernier bloc: #8942A</Text>
+          <Text style={styles.statusDetail}>Blockchain Active</Text>
         </View>
       </View>
 
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Transactions Récentes</Text>
+        <Text style={styles.sectionTitle}>Propositions Actives</Text>
         <TouchableOpacity style={styles.filterButton}>
           <Text style={styles.filterText}>Filtrer</Text>
           <Ionicons name="options-outline" size={14} color="#006949" />
@@ -46,16 +83,16 @@ export default function GovernanceScreen() {
         </View>
         <Text style={styles.proposalTitle}>Achat de tracteur - Campagne 2026</Text>
         <Text style={styles.proposalDesc}>
-          Décision d'investissement de 1 500 000 FCFA pour l'acquisition d'un nouveau tracteur afin d'optimiser les rendements de la prochaine saison.
+          Décision d'investissement pour l'acquisition d'un nouveau tracteur afin d'optimiser les rendements de la prochaine saison.
         </Text>
 
         <View style={styles.statsBox}>
           <View style={styles.statRow}>
             <Text style={styles.statLabel}>Échéance</Text>
-            <Text style={styles.statValue}>Dans 3 jours</Text>
+            <Text style={styles.statValue}>Bientôt</Text>
           </View>
           <View style={styles.statRow}>
-            <Text style={styles.statLabel}>Participation actuelle</Text>
+            <Text style={styles.statLabel}>Participation</Text>
             <Text style={styles.statValue}>68%</Text>
           </View>
           <View style={styles.progressBarBg}>
@@ -64,8 +101,8 @@ export default function GovernanceScreen() {
         </View>
 
         <View style={styles.voteActions}>
-          <Button title="OUI" onPress={() => {}} variant="primary" style={styles.voteButton} />
-          <Button title="NON" onPress={() => {}} variant="secondary" style={[styles.voteButton, { backgroundColor: '#d90429', borderColor: '#d90429' }]} />
+          <Button title="OUI" onPress={() => handleVote('YES')} variant="primary" style={styles.voteButton} />
+          <Button title="NON" onPress={() => handleVote('NO')} variant="secondary" style={[styles.voteButton, { backgroundColor: '#d90429', borderColor: '#d90429' }]} />
         </View>
       </View>
 
@@ -75,7 +112,7 @@ export default function GovernanceScreen() {
         <View style={styles.historyItem}>
           <View style={styles.historyContent}>
             <Text style={styles.historyTitleText}>Rénovation de l'entrepôt principal</Text>
-            <Text style={styles.historyDate}>Approuvé le 12 Oct 2023</Text>
+            <Text style={styles.historyDate}>Approuvé</Text>
           </View>
           <View style={[styles.historyBadge, styles.badgeAdopted]}>
             <Ionicons name="checkmark-circle" size={12} color="#17845f" />
@@ -86,7 +123,7 @@ export default function GovernanceScreen() {
         <View style={styles.historyItem}>
           <View style={styles.historyContent}>
             <Text style={styles.historyTitleText}>Partenariat logistique externe</Text>
-            <Text style={styles.historyDate}>Rejeté le 05 Sep 2023</Text>
+            <Text style={styles.historyDate}>Rejeté</Text>
           </View>
           <View style={[styles.historyBadge, styles.badgeRejected]}>
             <Ionicons name="close-circle" size={12} color="#93000a" />
