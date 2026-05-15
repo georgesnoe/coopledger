@@ -30,7 +30,7 @@ const envSchema = z.object({
   PINATA_API_KEY: z.string(),
   PINATA_API_SECRET: z.string(),
   PINATA_JWT: z.string(),
-  ALGORITHM: z._default(z.string(), "aes-256-ocb"),
+  ALGORITHM: z._default(z.string(), "aes-256-gcm"),
   CONTRACT_ADDRESS: z.string(),
 });
 
