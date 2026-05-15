@@ -1,4 +1,3 @@
-import { UserRole } from "@prisma/client";
 import type { NextFunction, Request, Response } from "express";
 import { prisma } from "@/utils/prisma";
 
@@ -43,4 +42,28 @@ export async function isAuthenticated(
 
     return res.status(401).json({ message: "Unauthorized" });
   }
+}
+
+export async function isPlatformAdmin(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const { user } = req;
+  if (!user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const isAdmin = await prisma.users.findUnique({
+    where: {
+      id: user.id,
+      role: "ADMIN",
+    },
+  });
+
+  if (!isAdmin) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  next();
 }
