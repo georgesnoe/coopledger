@@ -75,6 +75,11 @@ app.use("/api/payments", paymentsRoutes);
 app.use("/api/cooperatives", cooperativesRoutes);
 app.use("/api/user", userRoutes);
 
+app.use((err: any, req: any, res: any, next: any) => {
+  console.error("Unhandled error:", err);
+  res.status(500).json({ message: "Internal server error", error: err.message });
+});
+
 io.on("connection", (_) => {
   console.log("A user connected");
 });

@@ -1,9 +1,6 @@
-import { MembershipGrade, MembershipRole, MembershipStatus } from "@/db/enums";
 import type { Request, Response } from "express";
 import { cloudinary, pinata } from "@/utils/storage";
 import {
-  encrypt,
-  encryptFile,
   generateCoopKey,
 } from "@/services/crypto.service";
 import { prisma } from "@/utils/prisma";
@@ -34,88 +31,27 @@ export async function createCooperative(req: Request, res: Response) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
-  // Génération de la clé de la coopérative
-  const coopKey = generateCoopKey();
-  const encryptedCoopKey = encrypt(coopKey);
-
-  const encryptedStatusDocument = encryptFile(statusDocument);
-  const encryptedProofDocument = encryptFile(proofDocument);
-  const encryptedIdentityDocument = encryptFile(identityDocument);
-  const encryptedBusinessPlanDocument = businessPlanDocument
-    ? encryptFile(businessPlanDocument)
-    : null;
-
   try {
+    const uploadFile = async (file: Express.Multer.File) => {
+      const blob = new Blob([new Uint8Array(file.buffer)]);
+      const fileObj = new File([blob], file.filename);
+      const result = await pinata.upload.public.file(fileObj);
+      return result.cid;
+    };
+
     const [
-      statusDocumentUrl,
-      proofDocumentUrl,
-      identityDocumentUrl,
-      businessPlanDocumentUrl,
+      statusDocumentCid,
+      proofDocumentCid,
+      identityDocumentCid,
+      businessPlanDocumentCid,
     ] = await Promise.all([
-      pinata.upload.public.file(
-        new File(
-          [encryptedStatusDocument.encryptedData],
-          statusDocument.filename,
-        ),
-      ),
-      pinata.upload.public.file(
-        new File(
-          [encryptedProofDocument.encryptedData],
-          proofDocument.filename,
-        ),
-      ),
-      pinata.upload.public.file(
-        new File(
-          [encryptedIdentityDocument.encryptedData],
-          identityDocument.filename,
-        ),
-      ),
-      encryptedBusinessPlanDocument
-        ? pinata.upload.public.file(
-            new File(
-              [encryptedBusinessPlanDocument.encryptedData],
-              businessPlanDocument.filename,
-            ),
-          )
-        : null,
+      uploadFile(statusDocument),
+      uploadFile(proofDocument),
+      uploadFile(identityDocument),
+      businessPlanDocument ? uploadFile(businessPlanDocument) : Promise.resolve(null),
     ]);
 
     const result = await prisma.$transaction(async (tx) => {
-      const statusDocumentObject = await tx.encryptedDocument.create({
-        data: {
-          ipfsCid: statusDocumentUrl.cid,
-          iv: encryptedStatusDocument.iv,
-          tag: encryptedStatusDocument.tag,
-        },
-      });
-
-      const proofDocumentObject = await tx.encryptedDocument.create({
-        data: {
-          ipfsCid: proofDocumentUrl.cid,
-          iv: encryptedProofDocument.iv,
-          tag: encryptedProofDocument.tag,
-        },
-      });
-
-      const identityDocumentObject = await tx.encryptedDocument.create({
-        data: {
-          ipfsCid: identityDocumentUrl.cid,
-          iv: encryptedIdentityDocument.iv,
-          tag: encryptedIdentityDocument.tag,
-        },
-      });
-
-      const businessPlanDocumentObject =
-        businessPlanDocumentUrl && encryptedBusinessPlanDocument
-          ? await tx.encryptedDocument.create({
-              data: {
-                ipfsCid: businessPlanDocumentUrl.cid,
-                iv: encryptedBusinessPlanDocument.iv,
-                tag: encryptedBusinessPlanDocument.tag,
-              },
-            })
-          : null;
-
       let logoUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name as string)}&background=random&color=fff&size=128`;
       if (logo) {
         const uploadResult: any = await new Promise((resolve, reject) => {
@@ -129,6 +65,8 @@ export async function createCooperative(req: Request, res: Response) {
         logoUrl = uploadResult.secure_url;
       }
 
+      const coopKey = generateCoopKey();
+
       const createdCooperative = await tx.cooperatives.create({
         data: {
           name: name as string,
@@ -137,23 +75,22 @@ export async function createCooperative(req: Request, res: Response) {
           founders: founders as string[],
           latitude: latitude ? Number(latitude) : null,
           longitude: longitude ? Number(longitude) : null,
-          encryptionKey: encryptedCoopKey,
+          encryptionKey: coopKey,
           creatorId: req.user.id,
-          statusDocumentIpfsCid: statusDocumentObject.ipfsCid,
-          proofDocumentIpfsCid: proofDocumentObject.ipfsCid,
-          identityDocumentIpfsCid: identityDocumentObject.ipfsCid,
-          businessPlanDocumentIpfsCid: businessPlanDocumentObject?.ipfsCid,
+          statusDocumentIpfsCid: statusDocumentCid,
+          proofDocumentIpfsCid: proofDocumentCid,
+          identityDocumentIpfsCid: identityDocumentCid,
+          businessPlanDocumentIpfsCid: businessPlanDocumentCid,
         },
       });
 
-      // Le créateur devient Admin membre automatiquement
       await tx.memberships.create({
         data: {
           userId: req.user.id,
           cooperativeId: createdCooperative.id,
-          status: MembershipStatus.ACCEPTED,
-          grade: MembershipGrade.ADMIN,
-          role: MembershipRole.FARMER,
+          status: "ACCEPTED",
+          grade: "ADMIN",
+          role: "FARMER",
         },
       });
 
@@ -217,9 +154,9 @@ export async function joinCooperative(req: Request, res: Response) {
         data: {
           userId: req.user.id,
           cooperativeId: cooperative.id,
-          status: MembershipStatus.PENDING,
-          grade: MembershipGrade.MEMBER,
-          role: MembershipRole.FARMER,
+          status: "PENDING",
+          grade: "MEMBER",
+          role: "FARMER",
         },
       });
 
@@ -281,8 +218,8 @@ export async function approveCooperativeJoin(req: Request, res: Response) {
         },
         data: {
           status: isApproved
-            ? MembershipStatus.ACCEPTED
-            : MembershipStatus.REJECTED,
+            ? "ACCEPTED"
+            : "REJECTED",
         },
       });
 
