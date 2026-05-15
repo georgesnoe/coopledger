@@ -25,23 +25,25 @@ export async function isAuthenticated(
   }
 
   try {
-    // Manually set the session token header that better-auth expects
-    // better-auth often looks for the session token in the cookies or a specific header
+    // better-auth's getSession expects a request object. 
+    // We wrap the existing request and ensure the session token is where it expects it.
     const session = await auth.api.getSession({
       headers: {
         ...fromNodeHeaders(req.headers),
+        "authorization": `Bearer ${token}`,
         "better-auth.session-token": token,
       },
     });
 
     if (!session) {
-      throw new Error("Unauthorized");
+      return res.status(401).json({ message: "Session not found or expired" });
     }
 
     req.session = session;
 
     next();
   } catch (error: unknown) {
+    console.error("Auth Middleware Error:", error);
     if (error instanceof Error) {
       return res.status(401).json({ message: error.message });
     }
