@@ -186,7 +186,7 @@ export async function joinCooperative(req: Request, res: Response) {
 }
 
 export async function getCooperativeMembers(req: Request, res: Response) {
-  const { id } = req.params;
+  const { id } = req.params as { id: string };
 
   try {
     const members = await prisma.memberships.findMany({
