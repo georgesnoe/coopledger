@@ -52,6 +52,19 @@ export async function createCooperative(req: Request, res: Response) {
     ]);
 
     const result = await prisma.$transaction(async (tx) => {
+      const createDocRecord = async (cid: string) => {
+        return tx.encryptedDocument.create({
+          data: { ipfsCid: cid, iv: "", tag: "" },
+        });
+      };
+
+      await Promise.all([
+        createDocRecord(statusDocumentCid),
+        createDocRecord(proofDocumentCid),
+        createDocRecord(identityDocumentCid),
+        businessPlanDocumentCid ? createDocRecord(businessPlanDocumentCid) : Promise.resolve(null),
+      ]);
+
       let logoUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name as string)}&background=random&color=fff&size=128`;
       if (logo) {
         const uploadResult: any = await new Promise((resolve, reject) => {
