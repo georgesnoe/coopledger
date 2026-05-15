@@ -29,12 +29,12 @@ export const auth = betterAuth({
       phoneNumber: {
         type: "string",
         input: true,
-        required: true,
+        required: false,
       },
       role: {
         type: "string",
         input: true,
-        required: true,
+        required: false,
       },
     },
   },

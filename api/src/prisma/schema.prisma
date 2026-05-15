@@ -16,6 +16,7 @@ model Users {
   createdAt             DateTime      @default(now())
   updatedAt             DateTime      @updatedAt
   role                  UserRole      @default(USER)
+  phoneNumber           String?
   lastActiveAt          DateTime      @default(now())
   publicKey             String?
   encryptedPrivateKey   String?
@@ -241,6 +242,9 @@ enum FeeFrequency {
 enum UserRole {
   USER
   ADMIN
+  FARMER
+  SELLER
+  FINANCIAL_INSTITUTION
 }
 
 enum MembershipGrade {
