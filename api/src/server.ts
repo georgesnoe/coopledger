@@ -53,7 +53,12 @@ app.get("/api/governance", isAuthenticated, async (req, res) => {
     const cooperativeId = membership.cooperativeId;
     const activeVotes = await prisma.votes.findMany({
       where: { cooperativeId, status: "OPEN" },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
+      include: {
+        _count: {
+          select: { VoteCasts: true }
+        }
+      }
     });
 
     const finishedVotes = await prisma.votes.findMany({
