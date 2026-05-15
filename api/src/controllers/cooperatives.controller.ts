@@ -202,6 +202,27 @@ export async function getCooperativeMembers(req: Request, res: Response) {
   }
 }
 
+export async function getMyMembership(req: Request, res: Response) {
+  const { id } = req.params as { id: string };
+
+  try {
+    const membership = await prisma.memberships.findUnique({
+      where: {
+        userId_cooperativeId: { userId: req.user.id, cooperativeId: id },
+      },
+    });
+
+    if (!membership) {
+      return res.status(404).json({ message: "Vous n'êtes pas membre de cette coopérative" });
+    }
+
+    res.status(200).json(membership);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Erreur lors de la récupération du membership" });
+  }
+}
+
 export async function approveCooperativeJoin(req: Request, res: Response) {
   const { cooperativeId, memberId, isApproved } = req.body;
 

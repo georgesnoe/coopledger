@@ -3,6 +3,7 @@ import {
   createCooperative,
   getCooperatives,
   getCooperativeMembers,
+  getMyMembership,
   joinCooperative,
 } from "@/controllers/cooperatives.controller";
 import { Router } from "express";
@@ -28,6 +29,7 @@ cooperativesRoutes.post(
 );
 cooperativesRoutes.get("/", isAuthenticated, getCooperatives);
 cooperativesRoutes.get("/:id/members", isAuthenticated, getCooperativeMembers);
+cooperativesRoutes.get("/:id/membership/me", isAuthenticated, getMyMembership);
 cooperativesRoutes.post("/join", isAuthenticated, joinCooperative);
 cooperativesRoutes.post(
   "/join/approve",

@@ -12,6 +12,7 @@ import { cooperativesRoutes } from "@/routes/cooperatives.route";
 import { otpRoutes } from "@/routes/otp.route";
 import { paymentsRoutes } from "@/routes/payments.route";
 import { userRoutes } from "@/routes/user.route";
+import { votesRoutes } from "@/routes/votes.route";
 import { Server } from "socket.io";
 import { auth } from "@/utils/auth";
 import { prisma } from "@/utils/prisma";
@@ -74,6 +75,7 @@ app.use("/api/auth/whatsapp", otpRoutes);
 app.use("/api/payments", paymentsRoutes);
 app.use("/api/cooperatives", cooperativesRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/votes", votesRoutes);
 
 app.use((err: any, req: any, res: any, next: any) => {
   console.error("Unhandled error:", err);
