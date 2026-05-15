@@ -14,6 +14,8 @@ import { paymentsRoutes } from "@/routes/payments.route";
 import { userRoutes } from "@/routes/user.route";
 import { Server } from "socket.io";
 import { auth } from "@/utils/auth";
+import { prisma } from "@/utils/prisma";
+import { isAuthenticated } from "@/middlewares/auth.middleware";
 
 FedaPay.setApiKey(env.FEDAPAY_SECRET_KEY);
 FedaPay.setEnvironment("sandbox");
@@ -35,6 +37,39 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.get("/api/governance", isAuthenticated, async (req, res) => {
+  try {
+    const userId = req.session.user.id;
+    const membership = await prisma.memberships.findFirst({
+      where: { userId, status: "ACCEPTED" },
+      include: { cooperative: true }
+    });
+
+    if (!membership) {
+      return res.status(404).json({ message: "Aucune coopérative active trouvée" });
+    }
+
+    const cooperativeId = membership.cooperativeId;
+    const activeVotes = await prisma.votes.findMany({
+      where: { cooperativeId, status: "OPEN" },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    const finishedVotes = await prisma.votes.findMany({
+      where: { cooperativeId, status: { not: "OPEN" } },
+      orderBy: { createdAt: 'desc' },
+      take: 10
+    });
+
+    res.json({
+      cooperative: membership.cooperative,
+      activeVotes,
+      finishedVotes
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Erreur lors de la récupération des données de gouvernance" });
+  }
+});
 app.use("/api/auth/whatsapp", otpRoutes);
 app.use("/api/payments", paymentsRoutes);
 app.use("/api/cooperatives", cooperativesRoutes);

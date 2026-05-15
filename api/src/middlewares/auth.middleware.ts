@@ -17,15 +17,21 @@ export async function isAuthenticated(
   res: Response,
   next: NextFunction,
 ) {
-  const token = req.headers.authorization?.split(" ")[1];
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
 
   if (!token) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
   try {
+    // Manually set the session token header that better-auth expects
+    // better-auth often looks for the session token in the cookies or a specific header
     const session = await auth.api.getSession({
-      headers: fromNodeHeaders(req.headers),
+      headers: {
+        ...fromNodeHeaders(req.headers),
+        "better-auth.session-token": token,
+      },
     });
 
     if (!session) {
