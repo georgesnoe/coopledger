@@ -53,8 +53,10 @@ export async function createCooperative(req: Request, res: Response) {
 
     const result = await prisma.$transaction(async (tx) => {
       const createDocRecord = async (cid: string) => {
-        return tx.encryptedDocument.create({
-          data: { ipfsCid: cid, iv: "", tag: "" },
+        return tx.encryptedDocument.upsert({
+          where: { ipfsCid: cid },
+          update: {},
+          create: { ipfsCid: cid, iv: "", tag: "" },
         });
       };
 
