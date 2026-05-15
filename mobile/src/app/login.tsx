@@ -32,7 +32,7 @@ export default function LoginScreen() {
         router.replace("/");
       }
     } catch (e: any) {
-      Alert.alert("Ã‰chec de la connexion", e.message);
+      Alert.alert("Échec de la connexion", e.message);
     } finally {
       setLoading(false);
     }
@@ -75,7 +75,7 @@ export default function LoginScreen() {
           />
 
           <Text style={styles.forgotPassword} onPress={() => {}}>
-            Mot de passe oubliÃ© ?
+            Mot de passe oublié ?
           </Text>
 
           <Button
