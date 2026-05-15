@@ -5,7 +5,10 @@ const envSchema = z.object({
     z.enum(["development", "test", "production"]),
     "development",
   ),
-  API_BASE_URL: z._default(z.string(), "https://coopledger-api.onrender.com"),
+  API_BASE_URL: z._default(
+    z.string(),
+    "https://api.coopledger.georgesnoe.fr.eu.org",
+  ),
 });
 
 const _env = envSchema.safeParse(process.env);
