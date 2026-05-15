@@ -25,6 +25,7 @@
   "scripts": {
     "dev": "nodemon",
     "build": "prisma generate && tsc -b && node esbuild.config.mjs",
+    "vercel:build": "npm run build && rm dist/server.js",
     "start": "node dist/server.mjs",
     "lint": "biome check --fix",
     "format": "biome format --fix",
