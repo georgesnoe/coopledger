@@ -1,8 +1,8 @@
-import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
+import { createCipheriv, createDecipheriv, randomBytes, createHash } from "node:crypto";
 import { env } from "@/config/env";
 
 const ALGORITHM = env.ALGORITHM;
-const ENCRYPTION_KEY = env.ENCRYPTION_KEY;
+const ENCRYPTION_KEY = createHash("sha256").update(env.ENCRYPTION_KEY).digest("hex");
 
 export const encrypt = (text: string): string => {
   const iv = randomBytes(12);
@@ -32,7 +32,7 @@ export const decrypt = (text: string): string => {
  * Utilisé pour les documents de coopérative et les reçus.
  */
 export function encryptWithKey(data: Buffer | string, hexKey: string) {
-  const iv = randomBytes(16);
+  const iv = randomBytes(12);
   const key = Buffer.from(hexKey, "hex");
   const cipher = createCipheriv("aes-256-gcm", key, iv);
 
