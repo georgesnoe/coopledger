@@ -6,7 +6,7 @@ const ENCRYPTION_KEY = env.ENCRYPTION_KEY;
 
 export const encrypt = (text: string): string => {
   const iv = randomBytes(12);
-  const cipher = createCipheriv(ALGORITHM, Buffer.from(ENCRYPTION_KEY), iv);
+  const cipher: any = createCipheriv(ALGORITHM, Buffer.from(ENCRYPTION_KEY), iv);
   let encrypted = cipher.update(text);
   encrypted = Buffer.concat([encrypted, cipher.final()]);
   const tag = cipher.getAuthTag();
@@ -20,7 +20,7 @@ export const decrypt = (text: string): string => {
   const iv = Buffer.from(ivHex, "hex");
   const tag = Buffer.from(tagHex, "hex");
   const encryptedText = Buffer.from(encryptedHex, "hex");
-  const decipher = createDecipheriv(ALGORITHM, Buffer.from(ENCRYPTION_KEY), iv);
+  const decipher: any = createDecipheriv(ALGORITHM, Buffer.from(ENCRYPTION_KEY), iv);
   decipher.setAuthTag(tag);
   let decrypted = decipher.update(encryptedText);
   decrypted = Buffer.concat([decrypted, decipher.final()]);
