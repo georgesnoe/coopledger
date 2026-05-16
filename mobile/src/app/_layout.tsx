@@ -1,7 +1,11 @@
 import { SplashScreen, Stack, useRouter, useSegments } from "expo-router";
 import { useEffect, useState } from "react";
 import { useFonts } from "expo-font";
-import { authClient, getAuthToken, authenticatedFetch } from "@/utils/auth-client";
+import {
+  authClient,
+  getAuthToken,
+  authenticatedFetch,
+} from "@/utils/auth-client";
 import { env } from "@/config/env";
 
 SplashScreen.preventAutoHideAsync();
@@ -32,30 +36,35 @@ export default function RootLayout() {
       const session = await authClient.getSession();
       const user = session.data;
 
-      const inAuthGroup = segments[0] === "(tabs)";
+      const publicPages = ["login", "signup", "verify-whatsapp"];
+      const inPublic = publicPages.includes(segments[0]);
       const inCoopSelection = segments[0] === "choose-cooperative";
-      const inLogin = segments[0] === "login";
+
+      if (inPublic) {
+        setIsReady(true);
+        return;
+      }
 
       if (!user) {
-        if (!inLogin) {
-          router.replace("/login");
-        }
+        router.replace("/login");
         setIsReady(true);
         return;
       }
 
       try {
-        const { data } = await authenticatedFetch(`${env.API_BASE_URL}/api/user/dashboard`, {}, router);
-        
-        const hasCooperative = data.cooperatives && data.cooperatives.length > 0;
+        const { data } = await authenticatedFetch(
+          `${env.API_BASE_URL}/api/user/dashboard`,
+          {},
+          router,
+        );
+
+        const hasCooperative =
+          data.cooperatives && data.cooperatives.length > 0;
 
         if (!hasCooperative) {
+          const inCoopSelection = segments[0] === "choose-cooperative";
           if (!inCoopSelection) {
             router.replace("/choose-cooperative");
-          }
-        } else {
-          if (inCoopSelection) {
-            router.replace("/(tabs)");
           }
         }
       } catch (e) {

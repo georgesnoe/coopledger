@@ -30,45 +30,30 @@ export default function SignupScreen() {
 
     setLoading(true);
       try {
-        if (role === "FARMER") {
-          // Skip OTP and go straight to account creation
-          const result = await authClient.signUp.email({
-            name: fullName,
-            email: `${phone}@coopledger.tg`,
-            password,
-            fetchOptions: {
-              body: {
-                data: {
-                  role: role,
-                  phoneNumber: `+228${phone}`,
-                }
-              }
-            }
-          });
 
-          if (result.data?.user) {
-              router.replace("/choose-cooperative");
-          }
-        } else {
-          // Flux classique pour les autres
-          const result = await authClient.signUp.email({
-            name: fullName,
-            email: email,
-            password,
-            fetchOptions: {
-              body: {
-                data: {
-                  role: role,
-                  phoneNumber: `+228${phone}`,
-                }
-              }
-            }
-          });
+        // Sauvegarder les infos en attente de vérification OTP
+        await SecureStore.setItemAsync("signup_name", fullName);
+        await SecureStore.setItemAsync("signup_phone", phone);
+        await SecureStore.setItemAsync("signup_password", password);
+        await SecureStore.setItemAsync("signup_role", role);
+        if (email) await SecureStore.setItemAsync("signup_email", email);
 
-          if (result.data?.user) {
-              router.replace("/choose-cooperative");
-          }
+        // Envoyer le code OTP WhatsApp
+        const otpResponse = await fetch(
+          `${env.API_BASE_URL}/api/auth/whatsapp/send-code`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ phone: `+228${phone}` }),
+          },
+        );
+
+        if (!otpResponse.ok) {
+          const data = await otpResponse.json();
+          throw new Error(data.message || "Erreur d'envoi du code");
         }
+
+        router.replace("/verify-whatsapp");
       } catch (e: any) {
       Alert.alert("Échec de l'inscription", e.message);
     } finally {

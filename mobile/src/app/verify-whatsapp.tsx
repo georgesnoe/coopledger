@@ -63,14 +63,16 @@ export default function VerifyWhatsAppScreen() {
       const data = await response.json();
       if (!response.ok || !data.success) throw new Error(data.message || "Verification failed");
 
-      // 2. Procéder à l'inscription réelle (email fictif)
+      // 2. Procéder à l'inscription réelle
       const name = await SecureStore.getItemAsync("signup_name");
       const password = await SecureStore.getItemAsync("signup_password");
       const role = await SecureStore.getItemAsync("signup_role");
+      const signupEmail = await SecureStore.getItemAsync("signup_email");
+      const email = signupEmail || `${phone}@coopledger.tg`;
 
       const result = await authClient.signUp.email({
         name: name!,
-        email: `${phone}@coopledger.tg`,
+        email: email,
         password: password!,
         fetchOptions: {
           body: {
@@ -88,6 +90,7 @@ export default function VerifyWhatsAppScreen() {
           await SecureStore.deleteItemAsync("signup_phone");
           await SecureStore.deleteItemAsync("signup_password");
           await SecureStore.deleteItemAsync("signup_role");
+          await SecureStore.deleteItemAsync("signup_email");
 
           Alert.alert("Succès", "Votre compte a été créé et vérifié !");
           router.replace("/choose-cooperative");

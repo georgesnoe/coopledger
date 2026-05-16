@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Alert, Image } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Alert, Image, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { Button } from "@/components/ui/Button";
@@ -9,22 +9,32 @@ import { authClient } from "@/utils/auth-client";
 
 WebBrowser.maybeCompleteAuthSession();
 
+type LoginMethod = "phone" | "email";
+
 export default function LoginScreen() {
   const router = useRouter();
+  const [method, setMethod] = useState<LoginMethod>("phone");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
-    if (!phone || !password) {
+    if (method === "phone" && (!phone || !password)) {
+      Alert.alert("Erreur", "Veuillez remplir tous les champs");
+      return;
+    }
+    if (method === "email" && (!email || !password)) {
       Alert.alert("Erreur", "Veuillez remplir tous les champs");
       return;
     }
 
     setLoading(true);
     try {
+      const loginEmail = method === "phone" ? `${phone}@coopledger.tg` : email;
+
       const result = await authClient.signIn.email({
-        email: `${phone}@coopledger.tg`,
+        email: loginEmail,
         password,
       });
 
@@ -55,14 +65,47 @@ export default function LoginScreen() {
         </View>
 
         <View style={styles.form}>
-          <Input
-            label="Numéro de téléphone"
-            value={phone}
-            onChangeText={setPhone}
-            placeholder="Entrez votre numéro"
-            prefix="+228"
-            icon={<Ionicons name="call-outline" size={20} color="#666" />}
-          />
+          <View style={styles.methodRow}>
+            <TouchableOpacity
+              style={[styles.methodBtn, method === "phone" && styles.methodBtnActive]}
+              onPress={() => setMethod("phone")}
+            >
+              <Ionicons name="call-outline" size={16} color={method === "phone" ? "#fff" : "#666"} />
+              <Text style={[styles.methodBtnText, method === "phone" && styles.methodBtnTextActive]}>
+                Téléphone
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.methodBtn, method === "email" && styles.methodBtnActive]}
+              onPress={() => setMethod("email")}
+            >
+              <Ionicons name="mail-outline" size={16} color={method === "email" ? "#fff" : "#666"} />
+              <Text style={[styles.methodBtnText, method === "email" && styles.methodBtnTextActive]}>
+                Email
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {method === "phone" ? (
+            <Input
+              label="Numéro de téléphone"
+              value={phone}
+              onChangeText={setPhone}
+              placeholder="XX XX XX XX"
+              prefix="+228"
+              icon={<Ionicons name="call-outline" size={20} color="#666" />}
+            />
+          ) : (
+            <Input
+              label="Adresse Email"
+              value={email}
+              onChangeText={setEmail}
+              placeholder="exemple@mail.com"
+              keyboardType="email-address"
+              icon={<Ionicons name="mail-outline" size={20} color="#666" />}
+            />
+          )}
+
           <Input
             label="Mot de passe"
             value={password}
@@ -73,10 +116,6 @@ export default function LoginScreen() {
               <Ionicons name="lock-closed-outline" size={20} color="#666" />
             }
           />
-
-          <Text style={styles.forgotPassword} onPress={() => {}}>
-            Mot de passe oublié ?
-          </Text>
 
           <Button
             title="Connexion"
@@ -131,6 +170,35 @@ const styles = StyleSheet.create({
   },
   form: {
     width: "100%",
+  },
+  methodRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 16,
+  },
+  methodBtn: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: 10,
+    borderRadius: 12,
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  methodBtnActive: {
+    backgroundColor: "#2d936c",
+    borderColor: "#2d936c",
+  },
+  methodBtnText: {
+    fontSize: 13,
+    color: "#666",
+    fontFamily: "GoogleSansText-Medium",
+  },
+  methodBtnTextActive: {
+    color: "#fff",
   },
   forgotPassword: {
     textAlign: "right",
