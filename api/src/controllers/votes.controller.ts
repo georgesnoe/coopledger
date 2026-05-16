@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { VoteStatus, type VoteType } from "@/db/enums";
-import * as WhatsAppService from "@/services/whatsapp.service";
 import { prisma } from "@/utils/prisma";
+import { emit } from "@/utils/events";
 
 export async function proposeVote(req: Request, res: Response) {
   const {
@@ -23,8 +23,7 @@ export async function proposeVote(req: Request, res: Response) {
   }
 
   try {
-    await prisma.$transaction(async (tx) => {
-      // 1. Vérifier que l'auteur est membre du bureau
+    const vote = await prisma.$transaction(async (tx) => {
       const membership = await tx.memberships.findUnique({
         where: {
           userId_cooperativeId: { userId: req.user.id, cooperativeId },
@@ -35,17 +34,16 @@ export async function proposeVote(req: Request, res: Response) {
         !membership ||
         (membership.grade !== "ADMIN" && membership.grade !== "TREASURER")
       ) {
-        return res
-          .status(403)
-          .json({ message: "Seul le bureau peut proposer un vote" });
+        throw Object.assign(new Error("Seul le bureau peut proposer un vote"), {
+          statusCode: 403,
+        });
       }
 
-      // 2. Snapshot du nombre de votants éligibles (ACCEPTED)
       const voterCount = await tx.memberships.count({
         where: { cooperativeId, status: "ACCEPTED" },
       });
 
-      const vote = await tx.votes.create({
+      return tx.votes.create({
         data: {
           subject: subject as string,
           description: description as string,
@@ -60,43 +58,16 @@ export async function proposeVote(req: Request, res: Response) {
           creatorId: req.user.id,
         },
       });
-
-      res.status(201).json(vote);
     });
 
-    // Notification WhatsApp (After transaction to ensure vote exists)
-    try {
-      const members = await prisma.memberships.findMany({
-        where: { cooperativeId, status: "ACCEPTED" },
-        include: { user: true },
-      });
+    res.status(201).json(vote);
 
-      const message =
-        `📢 *Nouveau vote disponible !*\n\n` +
-        `📌 *Sujet:* ${subject}\n` +
-        `${description ? `📝 *Description:* ${description}\n` : ""}` +
-        `📅 *Date limite:* ${new Date(endDate).toLocaleDateString("fr-FR")}\n` +
-        `${amount ? `💰 *Montant:* ${amount} FCFA\n` : ""}` +
-        `👉 Veuillez consulter l'application CoopLedger pour voter.`;
-
-      await Promise.all(
-        members.map((m) => {
-          // extract phone from email: user@example.com -> user
-          // user is expected to be the phone number as per the account creation logic provided by user
-          const phone = m.user.email.split("@")[0];
-          return WhatsAppService.sendWhatsAppMessage(phone, message);
-        }),
-      );
-    } catch (notifError) {
-      console.error("WhatsApp Notification Error:", notifError);
-      // We don't fail the request if notifications fail
-    }
-  } catch (error) {
+    emit("vote.proposed", { voteId: vote.id, cooperativeId });
+  } catch (error: any) {
     console.error(error);
-    res.status(500).json({ message: "Une erreur s'est produite" });
+    const statusCode = error.statusCode || 500;
+    res.status(statusCode).json({ message: error.message });
   }
-
-  return res.end();
 }
 
 export async function castVote(req: Request, res: Response) {
@@ -107,17 +78,18 @@ export async function castVote(req: Request, res: Response) {
   }
 
   try {
-    await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const vote = await tx.votes.findUnique({
         where: { id: voteId },
         include: { _count: { select: { VoteCasts: true } } },
       });
 
       if (!vote || vote.status !== VoteStatus.OPEN) {
-        return res.status(404).json({ message: "Le vote n'est pas ouvert" });
+        throw Object.assign(new Error("Le vote n'est pas ouvert"), {
+          statusCode: 404,
+        });
       }
 
-      // Vérifier l'adhésion
       const membership = await tx.memberships.findUnique({
         where: {
           userId_cooperativeId: {
@@ -128,13 +100,13 @@ export async function castVote(req: Request, res: Response) {
       });
 
       if (!membership || membership.status !== "ACCEPTED") {
-        return res.status(403).json({
-          message: "Vous n'êtes pas membre actif de cette coopérative",
-        });
+        throw Object.assign(
+          new Error("Vous n'êtes pas membre actif de cette coopérative"),
+          { statusCode: 403 },
+        );
       }
 
-      // Enregistrer le vote et mettre à jour l'activité
-      const voteCast = await tx.voteCasts.create({
+      const cast = await tx.voteCasts.create({
         data: {
           voteId: voteId,
           userId: req.user.id,
@@ -152,9 +124,9 @@ export async function castVote(req: Request, res: Response) {
         data: { lastActiveAt: new Date() },
       });
 
-      // Clôture automatique si 100% de participation
+      let wasApproved = false;
+
       if (vote._count.VoteCasts + 1 >= vote.totalEligibleVoters) {
-        // Calcul du gagnant
         const allCasts = await tx.voteCasts.findMany({
           where: { voteId: voteId },
         });
@@ -168,20 +140,29 @@ export async function castVote(req: Request, res: Response) {
           counts[Number(a)] > counts[Number(b)] ? a : b,
         );
 
-        // Si c'est un vote général, on approuve si la majorité a voté pour une option
-        // Pour le MVP, on marque comme APPROVED et on pourrait stocker le winningChoice dans un nouveau champ
         await tx.votes.update({
           where: { id: voteId },
           data: { status: VoteStatus.APPROVED },
         });
+
+        wasApproved = true;
       }
 
-      res.status(201).json(voteCast);
+      return { cast, wasApproved, voteSubject: vote.subject, voteId: vote.id, cooperativeId: vote.cooperativeId };
     });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Une erreur s'est produite" });
-  }
 
-  return res.end();
+    res.status(201).json(result.cast);
+
+    if (result.wasApproved) {
+      emit("vote.approved", {
+        voteId: result.voteId,
+        cooperativeId: result.cooperativeId,
+        subject: result.voteSubject,
+      });
+    }
+  } catch (error: any) {
+    console.error(error);
+    const statusCode = error.statusCode || 500;
+    res.status(statusCode).json({ message: error.message });
+  }
 }

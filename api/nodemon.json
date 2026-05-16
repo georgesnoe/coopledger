@@ -1,5 +1,5 @@
 {
   "watch": ["src"],
   "ext": "ts",
-  "exec": "tsx ./src/server.ts"
+  "exec": "tsc -b && node esbuild.config.mjs && node dist/server.mjs"
 }

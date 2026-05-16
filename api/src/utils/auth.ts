@@ -38,5 +38,5 @@ export const auth = betterAuth({
       },
     },
   },
-  trustedOrigins: ["coopledger://"],
+  trustedOrigins: ["coopledger://", "exp://"],
 });

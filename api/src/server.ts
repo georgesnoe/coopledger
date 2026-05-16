@@ -24,6 +24,8 @@ import { userRoutes } from "@/routes/user.route";
 import { votesRoutes } from "@/routes/votes.route";
 import { auth } from "@/utils/auth";
 import { prisma } from "@/utils/prisma";
+import { emit } from "@/utils/events";
+import { setupNotificationHandlers } from "@/services/notifications";
 
 FedaPay.setApiKey(env.FEDAPAY_SECRET_KEY);
 FedaPay.setEnvironment("sandbox");
@@ -39,12 +41,13 @@ app.use(
     credentials: true,
   }),
 );
-app.all("/api/auth/{*any}", toNodeHandler(auth));
 app.use(compression());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use("/api/auth/whatsapp", otpRoutes);
+app.all("/api/auth/{*any}", toNodeHandler(auth));
 // Cron job to check for expired votes and trigger obligations
 cron.schedule("0 * * * *", async () => {
   console.log("[Cron] Checking for expired votes and recurring fees...");
@@ -63,6 +66,12 @@ cron.schedule("0 * * * *", async () => {
         data: { status: VoteStatus.EXPIRED },
       });
       console.log(`Vote ${vote.id} marked as EXPIRED`);
+
+      emit("vote.expired", {
+        voteId: vote.id,
+        cooperativeId: vote.cooperativeId,
+        subject: vote.subject,
+      });
     }
 
     // 2. Handle approved COTISATION obligations
@@ -179,7 +188,6 @@ app.get("/api/governance", isAuthenticated, async (req, res) => {
     });
   }
 });
-app.use("/api/auth/whatsapp", otpRoutes);
 app.use("/api/payments", paymentsRoutes);
 app.use("/api/cooperatives", cooperativesRoutes);
 app.use("/api/user", userRoutes);
@@ -195,6 +203,8 @@ app.use((err: any, req: any, res: any, next: any) => {
 io.on("connection", (_) => {
   console.log("A user connected");
 });
+
+setupNotificationHandlers();
 
 server.listen(env.PORT, () => {
   console.log(`Server is running on port ${env.PORT}`);
