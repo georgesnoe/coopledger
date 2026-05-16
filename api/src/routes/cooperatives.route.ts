@@ -2,9 +2,10 @@ import { Router } from "express";
 import {
   approveCooperativeJoin,
   createCooperative,
-  getCooperativeMembers,
   getCooperatives,
+  getCooperativeMembers,
   getMyMembership,
+  getDocument,
   joinCooperative,
 } from "@/controllers/cooperatives.controller";
 import {

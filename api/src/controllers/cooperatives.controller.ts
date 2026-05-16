@@ -304,7 +304,7 @@ export async function approveCooperativeJoin(req: Request, res: Response) {
 }
 
 export async function getDocument(req: Request, res: Response) {
-  const { coopId, docType } = req.params;
+  const { coopId, docType } = req.params as { coopId: string; docType: string };
 
   try {
     const coop = await prisma.cooperatives.findUnique({
