@@ -2,26 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { Button } from '@/components/ui/Button';
 import { Ionicons } from '@expo/vector-icons';
-import { authClient, getAuthToken } from '@/utils/auth-client';
+import { useRouter, Link, useIsFocused } from 'expo-router';
+import { authClient, authenticatedFetch } from '@/utils/auth-client';
 import { env } from '@/config/env';
 
 export default function HomeScreen() {
+  const router = useRouter();
+  const isFocused = useIsFocused();
   const [userData, setUserData] = useState<any>(null);
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadData() {
+      setLoading(true);
       try {
         const session = await authClient.getSession();
 
         if (session.data) {
           setUserData(session.data.user);
 
-          const response = await fetch(`${env.API_BASE_URL}/api/user/dashboard`, {
-            headers: { 'Authorization': `Bearer ${await getAuthToken()}` },
-          });
-          const data = await response.json();
+          const { data } = await authenticatedFetch(`${env.API_BASE_URL}/api/user/dashboard`, {}, router);
           setDashboardData(data);
         }
       } catch (e) {
@@ -32,7 +33,7 @@ export default function HomeScreen() {
     }
 
     loadData();
-  }, []);
+  }, [isFocused]);
 
   if (loading) {
     return (
@@ -49,37 +50,28 @@ export default function HomeScreen() {
           <Text style={styles.greeting}>Bonjour,</Text>
           <Text style={styles.userName}>{userData?.name || 'Utilisateur'}</Text>
         </View>
-        <TouchableOpacity style={styles.notificationButton}>
+        <TouchableOpacity style={styles.notificationButton} onPress={() => router.push('/notifications')}>
           <Ionicons name="notifications-outline" size={24} color="#1a1c1c" />
           <View style={styles.notificationBadge} />
         </TouchableOpacity>
-      </View>
-
-      <View style={styles.walletCard}>
-        <Text style={styles.walletLabel}>MON PORTEFEUILLE</Text>
-        <Text style={styles.walletValue}>
-          {dashboardData?.balance || '0'} {dashboardData?.currency || 'FCFA'}
-        </Text>
-        <View style={styles.walletActions}>
-          <Button title="Envoyer" variant="primary" style={styles.actionButton} onPress={() => {}} />
-          <Button title="Recevoir" variant="secondary" style={styles.actionButton} onPress={() => {}} />
-        </View>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Mes Coopératives</Text>
         <View style={styles.coopList}>
           {dashboardData?.cooperatives?.map((coop: any, index: number) => (
-            <View key={coop.id || index} style={styles.coopItem}>
-              <View style={styles.coopIcon}>
-                <Ionicons name="leaf" size={24} color="#2d936c" />
-              </View>
-              <View style={styles.coopInfo}>
-                <Text style={styles.coopName}>{coop.name}</Text>
-                <Text style={styles.coopStatus}>Active</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color="#ccc" />
-            </View>
+            <Link key={coop.id || index} href={`/cooperative/${coop.id}`} asChild>
+              <TouchableOpacity style={styles.coopItem}>
+                <View style={styles.coopIcon}>
+                  <Ionicons name="leaf" size={24} color="#2d936c" />
+                </View>
+                <View style={styles.coopInfo}>
+                  <Text style={styles.coopName}>{coop.name}</Text>
+                  <Text style={styles.coopStatus}>Active</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#ccc" />
+              </TouchableOpacity>
+            </Link>
           )) || <Text style={styles.emptyText}>Aucune coopérative rejointe.</Text>}
         </View>
       </View>
@@ -87,7 +79,7 @@ export default function HomeScreen() {
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Activité Récente</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/activity')}>
             <Text style={styles.seeAllText}>Voir tout</Text>
           </TouchableOpacity>
         </View>

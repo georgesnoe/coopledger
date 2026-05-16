@@ -1,9 +1,7 @@
 import type { Request, Response } from "express";
-import { cloudinary, pinata } from "@/utils/storage";
-import {
-  generateCoopKey,
-} from "@/services/crypto.service";
+import { decryptWithKey, generateCoopKey } from "@/services/crypto.service";
 import { prisma } from "@/utils/prisma";
+import { cloudinary, pinata } from "@/utils/storage";
 
 export async function createCooperative(req: Request, res: Response) {
   const { name, description, founders, latitude, longitude } = req.body;
@@ -48,7 +46,9 @@ export async function createCooperative(req: Request, res: Response) {
       uploadFile(statusDocument),
       uploadFile(proofDocument),
       uploadFile(identityDocument),
-      businessPlanDocument ? uploadFile(businessPlanDocument) : Promise.resolve(null),
+      businessPlanDocument
+        ? uploadFile(businessPlanDocument)
+        : Promise.resolve(null),
     ]);
 
     const result = await prisma.$transaction(async (tx) => {
@@ -64,7 +64,9 @@ export async function createCooperative(req: Request, res: Response) {
         createDocRecord(statusDocumentCid),
         createDocRecord(proofDocumentCid),
         createDocRecord(identityDocumentCid),
-        businessPlanDocumentCid ? createDocRecord(businessPlanDocumentCid) : Promise.resolve(null),
+        businessPlanDocumentCid
+          ? createDocRecord(businessPlanDocumentCid)
+          : Promise.resolve(null),
       ]);
 
       let logoUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name as string)}&background=random&color=fff&size=128`;
@@ -192,13 +194,15 @@ export async function getCooperativeMembers(req: Request, res: Response) {
     const members = await prisma.memberships.findMany({
       where: { cooperativeId: id },
       include: { user: true },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
 
     res.status(200).json(members);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Erreur lors de la récupération des membres" });
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération des membres" });
   }
 }
 
@@ -213,20 +217,24 @@ export async function getMyMembership(req: Request, res: Response) {
     });
 
     if (!membership) {
-      return res.status(404).json({ message: "Vous n'êtes pas membre de cette coopérative" });
+      return res
+        .status(404)
+        .json({ message: "Vous n'êtes pas membre de cette coopérative" });
     }
 
     res.status(200).json(membership);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Erreur lors de la récupération du membership" });
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération du membership" });
   }
 }
 
 export async function approveCooperativeJoin(req: Request, res: Response) {
   const { cooperativeId, memberId, isApproved } = req.body;
 
-  if (!cooperativeId || !memberId || !isApproved) {
+  if (!cooperativeId || !memberId || isApproved === undefined) {
     return res
       .status(400)
       .json({ message: "Les champs ne sont pas renseignés" });
@@ -244,15 +252,28 @@ export async function approveCooperativeJoin(req: Request, res: Response) {
         return res.status(404).json({ message: "La coopérative n'existe pas" });
       }
 
+      const approverMembership = await tx.memberships.findUnique({
+        where: {
+          userId_cooperativeId: { userId: req.user.id, cooperativeId },
+        },
+      });
+
+      if (
+        !approverMembership ||
+        (approverMembership.grade !== "ADMIN" &&
+          approverMembership.grade !== "TREASURER")
+      ) {
+        return res
+          .status(403)
+          .json({ message: "Seul le bureau peut approuver des membres" });
+      }
+
       const membership = await tx.memberships.findUnique({
         where: {
           userId_cooperativeId: {
             userId: memberId,
             cooperativeId: cooperativeId,
           },
-        },
-        include: {
-          cooperative: true,
         },
       });
 
@@ -270,18 +291,83 @@ export async function approveCooperativeJoin(req: Request, res: Response) {
           },
         },
         data: {
-          status: isApproved
-            ? "ACCEPTED"
-            : "REJECTED",
+          status: isApproved ? "ACCEPTED" : "REJECTED",
         },
       });
 
-      res.status(200).json();
+      res.status(200).json({ message: "Statut de l'adhésion mis à jour" });
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Une erreur s'est produite" });
   }
+}
 
-  return res.end();
+export async function getDocument(req: Request, res: Response) {
+  const { coopId, docType } = req.params;
+
+  try {
+    const coop = await prisma.cooperatives.findUnique({
+      where: { id: coopId },
+    });
+
+    if (!coop) {
+      return res.status(404).json({ message: "Coopérative non trouvée" });
+    }
+
+    const membership = await prisma.memberships.findUnique({
+      where: {
+        userId_cooperativeId: { userId: req.user.id, cooperativeId: coopId },
+      },
+    });
+
+    if (!membership || membership.status !== "ACCEPTED") {
+      return res.status(403).json({ message: "Accès refusé au document" });
+    }
+
+    let cid: string | null = null;
+    if (docType === "status") cid = coop.statusDocumentIpfsCid;
+    else if (docType === "proof") cid = coop.proofDocumentIpfsCid;
+    else if (docType === "identity") cid = coop.identityDocumentIpfsCid;
+    else if (docType === "business") cid = coop.businessPlanDocumentIpfsCid;
+    else return res.status(400).json({ message: "Type de document invalide" });
+
+    if (!cid) {
+      return res.status(404).json({ message: "Document non disponible" });
+    }
+
+    const docRecord = await prisma.encryptedDocument.findUnique({
+      where: { ipfsCid: cid },
+    });
+
+    if (!docRecord) {
+      return res
+        .status(404)
+        .json({ message: "Enregistrement du document introuvable" });
+    }
+
+    const response = await fetch(`https://gateway.pinata.cloud/ipfs/${cid}`);
+    const buffer = Buffer.from(await response.arrayBuffer());
+
+    if (!coop.encryptionKey) {
+      return res
+        .status(500)
+        .json({ message: "Clé de chiffrement de la coopérative manquante" });
+    }
+
+    const decryptedBuffer = decryptWithKey(
+      buffer,
+      coop.encryptionKey,
+      docRecord.iv,
+      docRecord.tag,
+    );
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.send(decryptedBuffer);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération du document" });
+  }
 }

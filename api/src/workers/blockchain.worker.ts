@@ -1,7 +1,7 @@
 import { Worker } from "bullmq";
+import { ProofType, recordProofOnChain } from "@/services/blockchain.service";
 import { prisma } from "@/utils/prisma";
 import { blockchainQueue } from "@/utils/queue";
-import { ProofType, recordProofOnChain } from "@/services/blockchain.service";
 
 const worker = new Worker(
   "blockchain-transactions",
@@ -24,7 +24,7 @@ const worker = new Worker(
         txData.id, // On utilise l'ID de la transaction comme base pour le hash de reçu pour le moment
         txData.ipfsCid || "",
         txData.amount,
-        txData.type === "COTISATION" ? ProofType.COTISATION : ProofType.RETRAIT
+        txData.type === "COTISATION" ? ProofType.COTISATION : ProofType.RETRAIT,
       );
 
       // Mise à jour finale dans la base de données
@@ -36,7 +36,9 @@ const worker = new Worker(
         },
       });
 
-      console.log(`Transaction ${txId} confirmée sur blockchain: ${blockchainHash}`);
+      console.log(
+        `Transaction ${txId} confirmée sur blockchain: ${blockchainHash}`,
+      );
     } catch (error) {
       console.error(`Erreur worker sur la transaction ${txId}:`, error);
       throw error;

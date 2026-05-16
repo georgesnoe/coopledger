@@ -15,7 +15,9 @@ export async function isAuthenticated(
   next: NextFunction,
 ) {
   const authHeader = req.headers.authorization;
-  const token = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
+  const token = authHeader?.startsWith("Bearer ")
+    ? authHeader.split(" ")[1]
+    : null;
 
   if (!token) {
     return res.status(401).json({ message: "Unauthorized" });

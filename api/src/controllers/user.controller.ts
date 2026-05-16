@@ -27,10 +27,10 @@ export const getDashboardData = async (req: Request, res: Response) => {
 
     // Calcul du solde (somme des cotisations - somme des retraits)
     const confirmedTransactions = await prisma.transactions.findMany({
-        where: {
-            userId: userId,
-            status: "CONFIRMED"
-        }
+      where: {
+        userId: userId,
+        status: "CONFIRMED",
+      },
     });
 
     const balance = confirmedTransactions.reduce((acc, tx) => {
@@ -49,6 +49,33 @@ export const getDashboardData = async (req: Request, res: Response) => {
     res.status(200).json(dashboardData);
   } catch (error) {
     console.error("Erreur Dashboard:", error);
-    res.status(500).json({ message: "Erreur lors de la récupération des données du dashboard" });
+    res.status(500).json({
+      message: "Erreur lors de la récupération des données du dashboard",
+    });
+  }
+};
+
+export const updateProfile = async (req: Request, res: Response) => {
+  const { name, phoneNumber } = req.body;
+  const userId = req.user.id;
+
+  try {
+    const updatedUser = await prisma.users.update({
+      where: { id: userId },
+      data: {
+        name: name ? name : undefined,
+        phoneNumber: phoneNumber ? phoneNumber : undefined,
+      },
+    });
+
+    res.status(200).json({
+      message: "Profil mis à jour avec succès",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Erreur Update Profile:", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la mise à jour du profil" });
   }
 };

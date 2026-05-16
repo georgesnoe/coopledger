@@ -15,3 +15,18 @@ export const sendWhatsAppOTP = async (to: string, code: string) => {
     }),
   });
 };
+
+export const sendWhatsAppMessage = async (to: string, message: string) => {
+  return await fetch(new URL("/send/message", env.GOWA_API_URL), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Basic ${Buffer.from(env.GOWA_API_BASIC_AUTH).toString("base64")}`,
+    },
+    body: JSON.stringify({
+      phone: `${to}@s.whatsapp.net`,
+      message,
+      duration: 300,
+    }),
+  });
+};

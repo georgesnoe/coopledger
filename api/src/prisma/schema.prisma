@@ -198,6 +198,7 @@ model VoteCasts {
   id                      String         @id @default(uuid())
   voteId                  String
   userId                  String
+  choiceIndex             Int            @default(0)
   user                    Users          @relation(fields: [userId], references: [id], onDelete: Cascade)
   vote                    Votes          @relation(fields: [voteId], references: [id], onDelete: Cascade)
   createdAt               DateTime       @default(now())

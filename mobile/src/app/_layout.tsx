@@ -1,7 +1,8 @@
 import { SplashScreen, Stack, useRouter, useSegments } from "expo-router";
 import { useEffect, useState } from "react";
 import { useFonts } from "expo-font";
-import { authClient } from "@/utils/auth-client";
+import { authClient, getAuthToken, authenticatedFetch } from "@/utils/auth-client";
+import { env } from "@/config/env";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -32,18 +33,33 @@ export default function RootLayout() {
       const user = session.data;
 
       const inAuthGroup = segments[0] === "(tabs)";
+      const inCoopSelection = segments[0] === "choose-cooperative";
+      const inLogin = segments[0] === "login";
 
       if (!user) {
-        if (inAuthGroup) {
+        if (!inLogin) {
           router.replace("/login");
         }
-      } else {
-        // if (!user.isWhatsappVerified) {
-        //   router.replace("/verify-whatsapp");
-        // } else
-        if (!inAuthGroup) {
-          router.replace("/(tabs)");
+        setIsReady(true);
+        return;
+      }
+
+      try {
+        const { data } = await authenticatedFetch(`${env.API_BASE_URL}/api/user/dashboard`, {}, router);
+        
+        const hasCooperative = data.cooperatives && data.cooperatives.length > 0;
+
+        if (!hasCooperative) {
+          if (!inCoopSelection) {
+            router.replace("/choose-cooperative");
+          }
+        } else {
+          if (inCoopSelection) {
+            router.replace("/(tabs)");
+          }
         }
+      } catch (e) {
+        console.error("Auth check failed", e);
       }
       setIsReady(true);
     };

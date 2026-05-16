@@ -192,7 +192,9 @@ export const verifyProofOnChain = async (lighthouseCid: string) => {
 export const sealTransactionOnChain = async (dataHash: string) => {
   const tx = await systemWallet.sendTransaction({
     to: systemWallet.address,
-    data: ethers.hexlify(ethers.isHexString(dataHash) ? dataHash : ethers.toUtf8Bytes(dataHash)),
+    data: ethers.hexlify(
+      ethers.isHexString(dataHash) ? dataHash : ethers.toUtf8Bytes(dataHash),
+    ),
   });
 
   await tx.wait();

@@ -1,5 +1,6 @@
-import { VoteStatus, type VoteType } from "@/db/enums";
 import type { Request, Response } from "express";
+import { VoteStatus, type VoteType } from "@/db/enums";
+import * as WhatsAppService from "@/services/whatsapp.service";
 import { prisma } from "@/utils/prisma";
 
 export async function proposeVote(req: Request, res: Response) {
@@ -62,6 +63,34 @@ export async function proposeVote(req: Request, res: Response) {
 
       res.status(201).json(vote);
     });
+
+    // Notification WhatsApp (After transaction to ensure vote exists)
+    try {
+      const members = await prisma.memberships.findMany({
+        where: { cooperativeId, status: "ACCEPTED" },
+        include: { user: true },
+      });
+
+      const message =
+        `📢 *Nouveau vote disponible !*\n\n` +
+        `📌 *Sujet:* ${subject}\n` +
+        `${description ? `📝 *Description:* ${description}\n` : ""}` +
+        `📅 *Date limite:* ${new Date(endDate).toLocaleDateString("fr-FR")}\n` +
+        `${amount ? `💰 *Montant:* ${amount} FCFA\n` : ""}` +
+        `👉 Veuillez consulter l'application CoopLedger pour voter.`;
+
+      await Promise.all(
+        members.map((m) => {
+          // extract phone from email: user@example.com -> user
+          // user is expected to be the phone number as per the account creation logic provided by user
+          const phone = m.user.email.split("@")[0];
+          return WhatsAppService.sendWhatsAppMessage(phone, message);
+        }),
+      );
+    } catch (notifError) {
+      console.error("WhatsApp Notification Error:", notifError);
+      // We don't fail the request if notifications fail
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Une erreur s'est produite" });
@@ -109,7 +138,7 @@ export async function castVote(req: Request, res: Response) {
         data: {
           voteId: voteId,
           userId: req.user.id,
-          // Note: choiceIndex pourrait être stocké dans un futur champ si besoin de plus de détail
+          choiceIndex: choiceIndex,
         },
       });
 
@@ -125,9 +154,25 @@ export async function castVote(req: Request, res: Response) {
 
       // Clôture automatique si 100% de participation
       if (vote._count.VoteCasts + 1 >= vote.totalEligibleVoters) {
+        // Calcul du gagnant
+        const allCasts = await tx.voteCasts.findMany({
+          where: { voteId: voteId },
+        });
+
+        const counts = allCasts.reduce((acc: any, cast: any) => {
+          acc[cast.choiceIndex] = (acc[cast.choiceIndex] || 0) + 1;
+          return acc;
+        }, {});
+
+        const winningChoice = Object.keys(counts).reduce((a, b) =>
+          counts[Number(a)] > counts[Number(b)] ? a : b,
+        );
+
+        // Si c'est un vote général, on approuve si la majorité a voté pour une option
+        // Pour le MVP, on marque comme APPROVED et on pourrait stocker le winningChoice dans un nouveau champ
         await tx.votes.update({
           where: { id: voteId },
-          data: { status: VoteStatus.APPROVED }, // Simplification pour le MVP: tout vote fini est approuvé
+          data: { status: VoteStatus.APPROVED },
         });
       }
 

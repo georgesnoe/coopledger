@@ -1,34 +1,73 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
 import { Button } from '@/components/ui/Button';
 import { Ionicons } from '@expo/vector-icons';
-import { getAuthToken } from '@/utils/auth-client';
+import { useRouter, useIsFocused } from 'expo-router';
+import { authenticatedFetch } from '@/utils/auth-client';
 import { env } from '@/config/env';
 
 export default function GovernanceScreen() {
-  const [dashboardData, setDashboardData] = useState<any>(null);
+  const router = useRouter();
+  const isFocused = useIsFocused();
+  const [governanceData, setGovernanceData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadGovernanceData() {
-      try {
-        const token = await getAuthToken();
-        const response = await fetch(`${env.API_BASE_URL}/api/user/dashboard`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await response.json();
-        setDashboardData(data);
-      } catch (e) {
-        console.error('Error loading governance data:', e);
-      } finally {
-        setLoading(false);
-      }
-    }
     loadGovernanceData();
-  }, []);
+  }, [isFocused]);
 
-  const handleVote = async (vote: 'YES' | 'NO') => {
-    Alert.alert('Vote', `Vous avez voté ${vote}. Cette fonctionnalité sera bientôt disponible via l'API /api/votes/cast.`);
+  const loadGovernanceData = async () => {
+    setLoading(true);
+    try {
+      const { data } = await authenticatedFetch(`${env.API_BASE_URL}/api/governance`, {}, router);
+      setGovernanceData(data);
+    } catch (e) {
+      console.error('Error loading governance data:', e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVote = async (voteId: string, choiceIndex: number) => {
+    try {
+      const { data, response } = await authenticatedFetch(`${env.API_BASE_URL}/api/votes/cast`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ voteId, choiceIndex }),
+      }, router);
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Erreur lors du vote');
+      }
+      
+      Alert.alert('Succès', 'Votre vote a été enregistré !');
+      loadGovernanceData();
+    } catch (e: any) {
+      Alert.alert('Erreur', e.message);
+    }
+  };
+
+  const handlePayment = async (vote: any) => {
+    try {
+      const { data: paymentData } = await authenticatedFetch(`${env.API_BASE_URL}/api/payments/create-checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: vote.amount,
+          description: `Cotisation: ${vote.subject}`,
+          reference: `vote_${vote.id}_${Date.now()}`,
+        }),
+      }, router);
+      
+      if (paymentData?.url) {
+        await WebBrowser.openBrowserAsync(paymentData.url);
+      } else {
+        Alert.alert('Erreur', 'Lien de paiement non disponible');
+      }
+    } catch (e: any) {
+      Alert.alert('Erreur', e.message);
+    }
   };
 
   if (loading) {
@@ -39,22 +78,32 @@ export default function GovernanceScreen() {
     );
   }
 
+  if (!governanceData) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <Text>Aucune coopérative active trouvée.</Text>
+      </View>
+    );
+  }
+
+  const activeVote = governanceData.activeVotes[0];
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Gouvernance</Text>
-        <Text style={styles.subtitle}>Participez aux décisions de votre coopérative.</Text>
+        <Text style={styles.subtitle}>
+          Participez aux décisions de {governanceData.cooperative.name}.
+        </Text>
       </View>
 
       <View style={styles.bentoBox}>
         <View style={styles.volumeCard}>
-          <Text style={styles.volumeLabel}>VOLUME MENSUEL SÉCURISÉ</Text>
-          <Text style={styles.volumeValue}>
-            {dashboardData?.balance || '0'} {dashboardData?.currency || 'FCFA'}
-          </Text>
+          <Text style={styles.volumeLabel}>COOPÉRATIVE</Text>
+          <Text style={styles.volumeValue}>{governanceData.cooperative.name}</Text>
           <View style={styles.volumeTrend}>
-            <Ionicons name="trending-up" size={12} color="#78d9ad" />
-            <Text style={styles.volumeTrendText}>Données synchronisées</Text>
+            <Ionicons name="checkmark-circle" size={12} color="#78d9ad" />
+            <Text style={styles.volumeTrendText}>Membre actif</Text>
           </View>
         </View>
 
@@ -76,64 +125,87 @@ export default function GovernanceScreen() {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.activeProposal}>
-        <View style={styles.badge}>
-          <Ionicons name="time-outline" size={12} color="#f59e0b" />
-          <Text style={styles.badgeText}>Vote en cours</Text>
-        </View>
-        <Text style={styles.proposalTitle}>Achat de tracteur - Campagne 2026</Text>
-        <Text style={styles.proposalDesc}>
-          Décision d'investissement pour l'acquisition d'un nouveau tracteur afin d'optimiser les rendements de la prochaine saison.
-        </Text>
+      {activeVote ? (
+        <View style={styles.activeProposal}>
+          <View style={styles.badge}>
+            <Ionicons name="time-outline" size={12} color="#f59e0b" />
+            <Text style={styles.badgeText}>Vote en cours</Text>
+          </View>
+          <Text style={styles.proposalTitle}>{activeVote.subject}</Text>
+          <Text style={styles.proposalDesc}>{activeVote.description}</Text>
 
-        <View style={styles.statsBox}>
-          <View style={styles.statRow}>
-            <Text style={styles.statLabel}>Échéance</Text>
-            <Text style={styles.statValue}>Bientôt</Text>
+          <View style={styles.statsBox}>
+            <View style={styles.statRow}>
+              <Text style={styles.statLabel}>Échéance</Text>
+              <Text style={styles.statValue}>{new Date(activeVote.endDate).toLocaleDateString()}</Text>
+            </View>
+            <View style={styles.statRow}>
+              <Text style={styles.statLabel}>Participation</Text>
+              <Text style={styles.statValue}>
+                {activeVote._count?.VoteCasts || 0} / {activeVote.totalEligibleVoters}
+              </Text>
+            </View>
+            <View style={styles.progressBarBg}>
+              <View style={[styles.progressBarFill, { width: `${((activeVote._count?.VoteCasts || 0) / activeVote.totalEligibleVoters) * 100}%` }]} />
+            </View>
           </View>
-          <View style={styles.statRow}>
-            <Text style={styles.statLabel}>Participation</Text>
-            <Text style={styles.statValue}>68%</Text>
-          </View>
-          <View style={styles.progressBarBg}>
-            <View style={[styles.progressBarFill, { width: '68%' }]} />
-          </View>
-        </View>
 
-        <View style={styles.voteActions}>
-          <Button title="OUI" onPress={() => handleVote('YES')} variant="primary" style={styles.voteButton} />
-          <Button title="NON" onPress={() => handleVote('NO')} variant="secondary" style={[styles.voteButton, { backgroundColor: '#d90429', borderColor: '#d90429' }]} />
+           <View style={styles.voteActions}>
+             {activeVote.status === 'APPROVED' && activeVote.amount ? (
+               <Button 
+                 title="Payer maintenant" 
+                 onPress={() => handlePayment(activeVote)} 
+                 variant="primary" 
+                 style={styles.voteButton} 
+               />
+             ) : (
+               activeVote.proposals.map((prop: string, index: number) => (
+                 <Button 
+                   key={index}
+                   title={prop} 
+                   onPress={() => handleVote(activeVote.id, index)} 
+                   variant={index === 0 ? "primary" : "secondary"} 
+                   style={styles.voteButton} 
+                 />
+               ))
+             )}
+           </View>
         </View>
-      </View>
+      ) : (
+        <Text style={styles.emptyText}>Aucun vote actif pour le moment.</Text>
+      )}
 
       <View style={styles.historySection}>
         <Text style={styles.historyTitle}>Historique des votes</Text>
 
-        <View style={styles.historyItem}>
-          <View style={styles.historyContent}>
-            <Text style={styles.historyTitleText}>Rénovation de l'entrepôt principal</Text>
-            <Text style={styles.historyDate}>Approuvé</Text>
-          </View>
-          <View style={[styles.historyBadge, styles.badgeAdopted]}>
-            <Ionicons name="checkmark-circle" size={12} color="#17845f" />
-            <Text style={styles.badgeAdoptedText}>Adopté</Text>
-          </View>
-        </View>
-
-        <View style={styles.historyItem}>
-          <View style={styles.historyContent}>
-            <Text style={styles.historyTitleText}>Partenariat logistique externe</Text>
-            <Text style={styles.historyDate}>Rejeté</Text>
-          </View>
-          <View style={[styles.historyBadge, styles.badgeRejected]}>
-            <Ionicons name="close-circle" size={12} color="#93000a" />
-            <Text style={styles.badgeRejectedText}>Rejeté</Text>
-          </View>
-        </View>
+         {governanceData.finishedVotes.map((vote: any, index: number) => (
+           <View key={vote.id || index} style={styles.historyItem}>
+             <View style={styles.historyContent}>
+               <Text style={styles.historyTitleText}>{vote.subject}</Text>
+               <Text style={styles.historyDate}>
+                 {new Date(vote.createdAt).toLocaleDateString()} - {vote.status}
+               </Text>
+               <Text style={[styles.historyDate, { fontFamily: 'GoogleSansText-Medium', color: '#666' }]}>
+                 Participation: {vote._count?.VoteCasts || 0} / {vote.totalEligibleVoters}
+               </Text>
+             </View>
+             <View style={[styles.historyBadge, vote.status === 'APPROVED' ? styles.badgeAdopted : styles.badgeRejected]}>
+               <Ionicons 
+                 name={vote.status === 'APPROVED' ? "checkmark-circle" : "close-circle"} 
+                 size={12} 
+                 color={vote.status === 'APPROVED' ? "#17845f" : "#93000a"} 
+               />
+               <Text style={vote.status === 'APPROVED' ? styles.badgeAdoptedText : styles.badgeRejectedText}>
+                 {vote.status === 'APPROVED' ? 'Adopté' : 'Rejeté'}
+               </Text>
+             </View>
+           </View>
+         ))}
       </View>
     </ScrollView>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

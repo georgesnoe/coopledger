@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIn
 import { Button } from '@/components/ui/Button';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { authClient, getAuthToken } from '@/utils/auth-client';
+import { authClient, authenticatedFetch } from '@/utils/auth-client';
 import { env } from '@/config/env';
 
 export default function ProfileScreen() {
@@ -19,11 +19,7 @@ export default function ProfileScreen() {
         if (session.data) {
           setUserData(session.data.user);
           
-          const token = await getAuthToken();
-          const response = await fetch(`${env.API_BASE_URL}/api/user/dashboard`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const data = await response.json();
+          const { data } = await authenticatedFetch(`${env.API_BASE_URL}/api/user/dashboard`, {}, router);
           setDashboardData(data);
         }
       } catch (e) {
@@ -85,22 +81,17 @@ export default function ProfileScreen() {
           <MenuItem 
             icon="person-outline" 
             title="Informations personnelles" 
-            onPress={() => {}} 
+            onPress={() => router.push('/personal-info')} 
           />
           <MenuItem 
             icon="notifications-outline" 
             title="Notifications" 
-            onPress={() => {}} 
+            onPress={() => router.push('/notifications-settings')} 
           />
           <MenuItem 
             icon="shield-checkmark-outline" 
             title="Sécurité et Confidentialité" 
-            onPress={() => {}} 
-          />
-          <MenuItem 
-            icon="help-circle-outline" 
-            title="Centre d'aide" 
-            onPress={() => {}} 
+            onPress={() => router.push('/security')} 
           />
         </View>
       </View>
@@ -109,15 +100,9 @@ export default function ProfileScreen() {
         <Text style={styles.sectionTitle}>Application</Text>
         <View style={styles.menu}>
           <MenuItem 
-            icon="language-outline" 
-            title="Langue" 
-            subtitle="Français"
-            onPress={() => {}} 
-          />
-          <MenuItem 
             icon="information-circle-outline" 
             title="À propos de CoopLedger" 
-            onPress={() => {}} 
+            onPress={() => router.push('/about')} 
           />
         </View>
       </View>

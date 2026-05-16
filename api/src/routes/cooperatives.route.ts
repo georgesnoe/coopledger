@@ -1,12 +1,12 @@
+import { Router } from "express";
 import {
   approveCooperativeJoin,
   createCooperative,
-  getCooperatives,
   getCooperativeMembers,
+  getCooperatives,
   getMyMembership,
   joinCooperative,
 } from "@/controllers/cooperatives.controller";
-import { Router } from "express";
 import {
   isAuthenticated,
   isPlatformAdmin,
@@ -34,8 +34,12 @@ cooperativesRoutes.post("/join", isAuthenticated, joinCooperative);
 cooperativesRoutes.post(
   "/join/approve",
   isAuthenticated,
-  isPlatformAdmin,
   approveCooperativeJoin,
+);
+cooperativesRoutes.get(
+  "/:coopId/document/:docType",
+  isAuthenticated,
+  getDocument,
 );
 
 export { cooperativesRoutes };

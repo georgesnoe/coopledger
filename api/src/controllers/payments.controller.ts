@@ -1,7 +1,7 @@
-import { env } from "@/config/env";
-import { TransactionStatus, type TransactionType } from "@/db/enums";
 import type { Request, Response } from "express";
 import { Transaction } from "fedapay";
+import { env } from "@/config/env";
+import { TransactionStatus, type TransactionType } from "@/db/enums";
 import { prisma } from "@/utils/prisma";
 
 export async function initiatePayment(req: Request, res: Response) {
@@ -47,6 +47,7 @@ export async function initiatePayment(req: Request, res: Response) {
         userId: req.user.id,
         cooperativeId: cooperativeId,
         voteId: voteId || null,
+        blockchainHash: fedapayTx.id, // Temporarily store FedaPay ID here until schema updated
       },
     });
 
@@ -60,13 +61,39 @@ export async function initiatePayment(req: Request, res: Response) {
 }
 
 export async function paymentCallback(req: Request, res: Response) {
-  const { id, status } = req.body; // Selon format webhook FedaPay
+  try {
+    const event = req.body;
 
-  // Logique simplifiée pour le MVP
-  if (status === "approved") {
-    // 1. Déclencher le worker BullMQ pour la séquence atomique (IPFS + Blockchain)
-    // 2. Mettre à jour le statut en CONFIRMED
+    // FedaPay events usually come as an object with 'event' and 'data'
+    const eventType = event.event;
+    const transactionData = event.data?.object;
+
+    if (!eventType || !transactionData) {
+      return res.status(400).send("Invalid webhook payload");
+    }
+
+    if (eventType === "transaction.approved") {
+      const fedapayTxId = transactionData.id;
+
+      const transaction = await prisma.transactions.findFirst({
+        where: {
+          blockchainHash: fedapayTxId,
+          status: TransactionStatus.PENDING,
+        },
+      });
+
+      if (transaction) {
+        await prisma.transactions.update({
+          where: { id: transaction.id },
+          data: { status: TransactionStatus.CONFIRMED },
+        });
+        console.log(`Transaction ${transaction.id} confirmed via FedaPay`);
+      }
+    }
+
+    res.status(200).send("Webhook processed");
+  } catch (error) {
+    console.error("Webhook error:", error);
+    res.status(500).send("Internal server error");
   }
-
-  res.status(200).send("Webhook received");
 }

@@ -1,12 +1,23 @@
-import { createCipheriv, createDecipheriv, randomBytes, createHash } from "node:crypto";
+import {
+  createCipheriv,
+  createDecipheriv,
+  createHash,
+  randomBytes,
+} from "node:crypto";
 import { env } from "@/config/env";
 
 const ALGORITHM = env.ALGORITHM;
-const ENCRYPTION_KEY = createHash("sha256").update(env.ENCRYPTION_KEY).digest("hex");
+const ENCRYPTION_KEY = createHash("sha256")
+  .update(env.ENCRYPTION_KEY)
+  .digest("hex");
 
 export const encrypt = (text: string): string => {
   const iv = randomBytes(12);
-  const cipher: any = createCipheriv(ALGORITHM, Buffer.from(ENCRYPTION_KEY), iv);
+  const cipher: any = createCipheriv(
+    ALGORITHM,
+    Buffer.from(ENCRYPTION_KEY),
+    iv,
+  );
   let encrypted = cipher.update(text);
   encrypted = Buffer.concat([encrypted, cipher.final()]);
   const tag = cipher.getAuthTag();
@@ -15,12 +26,17 @@ export const encrypt = (text: string): string => {
 
 export const decrypt = (text: string): string => {
   const [ivHex, tagHex, encryptedHex] = text.split(":");
-  if (!ivHex || !tagHex || !encryptedHex) throw new Error("Format de clé invalide");
+  if (!ivHex || !tagHex || !encryptedHex)
+    throw new Error("Format de clé invalide");
 
   const iv = Buffer.from(ivHex, "hex");
   const tag = Buffer.from(tagHex, "hex");
   const encryptedText = Buffer.from(encryptedHex, "hex");
-  const decipher: any = createDecipheriv(ALGORITHM, Buffer.from(ENCRYPTION_KEY), iv);
+  const decipher: any = createDecipheriv(
+    ALGORITHM,
+    Buffer.from(ENCRYPTION_KEY),
+    iv,
+  );
   decipher.setAuthTag(tag);
   let decrypted = decipher.update(encryptedText);
   decrypted = Buffer.concat([decrypted, decipher.final()]);

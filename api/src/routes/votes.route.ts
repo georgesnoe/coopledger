@@ -1,5 +1,5 @@
-import { castVote, proposeVote } from "@/controllers/votes.controller";
 import { Router } from "express";
+import { castVote, proposeVote } from "@/controllers/votes.controller";
 import { isAuthenticated } from "@/middlewares/auth.middleware";
 
 const votesRoutes = Router();

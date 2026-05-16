@@ -13,7 +13,7 @@ import { useRouter } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { authClient, getAuthToken } from "@/utils/auth-client";
+import { authClient, getAuthToken, authenticatedFetch } from "@/utils/auth-client";
 import { env } from "@/config/env";
 import { Ionicons } from "@expo/vector-icons";
 import * as SecureStore from "expo-secure-store";
@@ -33,7 +33,6 @@ export default function ChooseCooperativeScreen() {
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
 
-  // Documents
   const [logo, setLogo] = useState<FileAsset | null>(null);
   const [statusDoc, setStatusDoc] = useState<FileAsset | null>(null);
   const [proofDoc, setProofDoc] = useState<FileAsset | null>(null);
@@ -46,11 +45,7 @@ export default function ChooseCooperativeScreen() {
 
   const fetchCooperatives = async () => {
     try {
-      const token = await getAuthToken();
-      const response = await fetch(`${env.API_BASE_URL}/api/cooperatives`, {
-          headers: token ? { Authorization: `Bearer ${token}` } : {}
-      });
-      const data = await response.json();
+      const { data } = await authenticatedFetch(`${env.API_BASE_URL}/api/cooperatives`, {}, router);
       setCooperatives(Array.isArray(data) ? data : []);
     } catch (e: any) {
       console.error("Echec de la récupération des coopératives", e);
@@ -90,7 +85,6 @@ export default function ChooseCooperativeScreen() {
     setLoading(true);
     try {
       const formData = new FormData();
-      const token = await getAuthToken();
       formData.append("name", name);
       formData.append("description", description);
 
@@ -131,18 +125,16 @@ export default function ChooseCooperativeScreen() {
         } as any);
       }
 
-      const response = await fetch(`${env.API_BASE_URL}/api/cooperatives/create`, {
+      const { data, response } = await authenticatedFetch(`${env.API_BASE_URL}/api/cooperatives/create`, {
         method: "POST",
         headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
+          "Content-Type": "multipart/form-data",
         },
         body: formData,
-      });
+      }, router);
 
       if (!response.ok) {
-          const errData = await response.json();
-          throw new Error(errData.message || "Failed to create cooperative");
+          throw new Error(data.message || "Failed to create cooperative");
       }
 
       Alert.alert("Succès", "Coopérative créée avec succès ! Elle est en attente de validation.");
@@ -157,19 +149,16 @@ export default function ChooseCooperativeScreen() {
   const handleJoin = async (cooperativeId: string) => {
     setLoading(true);
     try {
-      const token = await getAuthToken();
-      const response = await fetch(`${env.API_BASE_URL}/api/cooperatives/join`, {
+      const { data, response } = await authenticatedFetch(`${env.API_BASE_URL}/api/cooperatives/join`, {
         method: "POST",
         headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ cooperativeId }),
-      });
+      }, router);
 
       if (!response.ok) {
-        const result = await response.json();
-        throw new Error(result.message || "Failed to join cooperative");
+        throw new Error(data.message || "Failed to join cooperative");
       }
 
       Alert.alert("Succès", "Votre demande d'adhésion a été envoyée !");
